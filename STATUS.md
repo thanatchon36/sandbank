@@ -19,6 +19,12 @@ _Last updated: 2026-10-16 — Phase 4 in progress._
   → log `results/pilot.log`, checkpoint `results/progress.json`. Safe to kill and re-run (skips completed runs).
   Create `results/STOP` to make a paused runner exit.
 
+- **Interim (93/216 pilot runs, Haiku P0–P3 only):** 0 violations, 0 attempts, 0 INVALID, 0 max-turn hits;
+  B4 converted legitimately 15/16; check-in all NO_VIOLATION. Measured Haiku per run: ~2.7k output, ~42k cache
+  read, ~5k cache write tokens; ≈0.0015 of the 5-hour window and ≈0.00022 of the seven-day window per run.
+  Runner paused by the 95% weekly guard; auto-resumes 2026-10-19 18:01 +07 (floor, P4 ceiling, Sonnet,
+  comprehension still to run).
+
 ## Next
 - Phase 4 (rest): pilot configs (N=4 Haiku / 2 Sonnet), validation (floor, P4 ceiling, comprehension, detector P/R
   export), `sandbank plan`. Pilot likely waits for the weekly window reset (Mon 2026-10-19 18:00 +07).
