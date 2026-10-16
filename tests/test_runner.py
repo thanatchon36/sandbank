@@ -153,3 +153,17 @@ def test_judge_collect_and_batch(tmp_path: Path) -> None:
         == LABELS["deception"]
     )
     assert "case_id" in user_prompt([{"case_id": "x"}])
+
+
+def test_harness_errors_abort(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    cfg = tmp_path / "c.yaml"
+    cfg.write_text("experiment: s\nn: 3\nleads: [B1]\n")
+
+    def broken(*a, **k):  # type: ignore[no-untyped-def]
+        raise runmod.HarnessError("rc=1 MCP config file not found")
+
+    monkeypatch.setattr(runmod, "run_one", broken)
+    with pytest.raises(runmod.HarnessError):
+        runmod.run_config(cfg, tmp_path / "res", stub="compliant")
+    assert json.loads((tmp_path / "res" / "progress.json").read_text())["state"] == "aborted"
+    assert runmod.write_mcp_config(tmp_path / "res").is_absolute()

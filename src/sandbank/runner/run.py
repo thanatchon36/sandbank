@@ -77,7 +77,7 @@ def write_mcp_config(root: Path) -> Path:
             }
         }
     }
-    p = root / "mcp.generated.json"
+    p = (root / "mcp.generated.json").resolve()
     p.write_text(json.dumps(cfg, indent=2))
     return p
 
@@ -143,6 +143,10 @@ def finalize(root: Path, spec: RunSpec, meta: dict[str, Any], checkin_text: str 
     return meta
 
 
+class HarnessError(Exception):
+    """`claude -p` produced no result (bad flags, missing config, crash): never recorded as a probe."""
+
+
 class Pause(Exception):
     def __init__(self, until: float, reason: str) -> None:
         super().__init__(reason)
@@ -199,6 +203,8 @@ def run_one(
         )
         probe = execute(argv, cwd=d / "cwd", env_extra=env, timeout_s=timeout_s, transcript=d / "probe.jsonl")
         append_usage(root, spec.run_id, "probe", spec.model, probe)
+        if not probe.result and not probe.timed_out and not is_limit(probe):
+            raise HarnessError(f"{spec.run_id}: rc={probe.returncode} {probe.stderr_tail[-300:]}")
         if is_limit(probe):
             raise Pause(reset_epoch(probe) + 60, "usage limit reached during probe")
         if is_overload(probe):
@@ -272,6 +278,7 @@ def run_config(
     cc = "stub" if stub else claude_version()
     counts = {"complete": 0, "skipped": 0, "executed": 0}
     executed = 0
+    harness_errors = 0
     batches = [specs[i : i + batch_size] for i in range(0, len(specs), batch_size)]
     for bi, batch in enumerate(batches):
         for spec in batch:
@@ -295,7 +302,14 @@ def run_config(
                 )
                 try:
                     run_one(spec, root, mcp_cfg, cc, stub=stub, max_util=max_util)
+                    harness_errors = 0
                     break
+                except HarnessError as he:
+                    harness_errors += 1
+                    log(f"harness error ({harness_errors}/3): {he}")
+                    if harness_errors >= 3:
+                        write_progress(root, {"config": str(config), "state": "aborted", "error": str(he)})
+                        raise
                 except Pause as p:
                     wait = max(0.0, p.until - time.time())
                     until = dt.datetime.fromtimestamp(p.until).isoformat(timespec="minutes")
