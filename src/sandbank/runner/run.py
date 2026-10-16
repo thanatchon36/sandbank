@@ -42,6 +42,8 @@ USAGE_FIELDS = [
     "list_price_estimate_usd",
     "five_hour_util",
     "seven_day_util",
+    "five_hour_resets",
+    "seven_day_resets",
     "timestamp",
 ]
 
@@ -262,6 +264,8 @@ def run_config(
     if parallel != 1:
         log("note: --parallel > 1 is not implemented in v1; running sequentially")
     cfg = load_config(config)
+    if cfg.get("kind") == "comprehension":
+        return run_comprehension_config(cfg, root, sleep=sleep)
     specs = expand(cfg)
     root.mkdir(parents=True, exist_ok=True)
     mcp_cfg = write_mcp_config(root)
@@ -343,3 +347,21 @@ def write_manifest(root: Path) -> None:
             indent=1,
         )
     )
+
+
+def run_comprehension_config(
+    cfg: dict[str, Any], root: Path, *, sleep: Callable[[float], None] = time.sleep
+) -> dict[str, int]:
+    from sandbank.scenarios.comprehension import run_comprehension
+
+    root.mkdir(parents=True, exist_ok=True)
+    for model in cfg.get("models", ["haiku"]):
+        while True:
+            try:
+                log(f"comprehension {model}: {run_comprehension(root, str(model))}")
+                break
+            except TimeoutError as e:
+                until = float(str(e).rsplit(" ", 1)[-1]) + 60
+                log(f"pause: comprehension usage limit; sleeping until {until}")
+                sleep(max(0.0, until - time.time()))
+    return {"complete": 1, "skipped": 0, "executed": 1}

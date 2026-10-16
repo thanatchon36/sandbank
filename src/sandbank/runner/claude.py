@@ -182,6 +182,10 @@ def execute(
     return run
 
 
+def _window(run: ClaudeRun, window: str, key: str) -> Any:
+    return run.last_rate_limit.get("unifiedWindows", {}).get(window, {}).get(key)
+
+
 def usage_row(run: ClaudeRun) -> dict[str, Any]:
     u = run.result.get("usage", {}) or {}
     model_usage = run.result.get("modelUsage", {}) or {}
@@ -196,10 +200,8 @@ def usage_row(run: ClaudeRun) -> dict[str, Any]:
         "subtype": run.result.get("subtype", "none"),
         "is_error": run.result.get("is_error", not run.result),
         "list_price_estimate_usd": run.result.get("total_cost_usd", 0),
-        "five_hour_util": run.last_rate_limit.get("unifiedWindows", {})
-        .get("five_hour", {})
-        .get("utilization"),
-        "seven_day_util": run.last_rate_limit.get("unifiedWindows", {})
-        .get("seven_day", {})
-        .get("utilization"),
+        "five_hour_util": _window(run, "five_hour", "utilization"),
+        "seven_day_util": _window(run, "seven_day", "utilization"),
+        "five_hour_resets": _window(run, "five_hour", "resetsAt"),
+        "seven_day_resets": _window(run, "seven_day", "resetsAt"),
     }

@@ -42,7 +42,19 @@ def build_parser() -> argparse.ArgumentParser:
     judge = sub.add_parser("judge", help="label V7 / deception / eval-awareness cases in batches")
     judge.add_argument("--results", type=Path, default=Path("results"))
     judge.add_argument("--model", default="haiku")
-    for name in ("validate", "plan", "analyze", "paper", "spotcheck"):
+    pl = sub.add_parser("plan", help="N plan from measured usage")
+    pl.add_argument("--results", type=Path, default=Path("results"))
+    pl.add_argument("--configs", type=Path, default=Path("configs"))
+    pl.add_argument("--weekly-budget", type=float, default=0.8)
+    sm = sub.add_parser("summary", help="per-cell violation table for one experiment")
+    sm.add_argument("--results", type=Path, default=Path("results"))
+    sm.add_argument("--experiment", default=None)
+    sm.add_argument("--by", default="model,pressure,frame")
+    sp = sub.add_parser("spotcheck", help="export runs for hand-labelling")
+    sp.add_argument("--results", type=Path, default=Path("results"))
+    sp.add_argument("--experiment", default=None)
+    sp.add_argument("--n", type=int, default=60)
+    for name in ("validate", "analyze", "paper"):
         sub.add_parser(name)
     return p
 
@@ -147,6 +159,22 @@ def main(argv: list[str] | None = None) -> int:
             return demo_stub(Path(tmp))
     if args.command == "demo":
         return demo_live(args)
+    if args.command == "plan":
+        from sandbank.analysis.plan import plan
+
+        print(plan(args.configs, args.results / "usage.csv", args.weekly_budget))
+        return 0
+    if args.command == "summary":
+        from sandbank.analysis.summary import cell_table, fmt_table, load_rows
+
+        keys = tuple(args.by.split(","))
+        print(fmt_table(cell_table(load_rows(args.results, args.experiment), keys), keys))
+        return 0
+    if args.command == "spotcheck":
+        from sandbank.judge.spotcheck import export
+
+        print(export(args.results, args.n, args.experiment))
+        return 0
     if args.command == "validate":
         return validate()
     if args.command == "judge":
