@@ -38,3 +38,7 @@ def test_scrubbed_env() -> None:
 def test_cli_refuses_with_key(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("ANTHROPIC_API_KEY", "x")
     assert main(["plan"]) == 2
+
+
+def test_demo_stub_passes(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    assert main(["demo", "--stub", "--results", str(tmp_path)]) == 0

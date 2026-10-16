@@ -1,6 +1,6 @@
 # STATUS
 
-_Last updated: 2026-10-16 — end of Phase 1._
+_Last updated: 2026-10-16 — end of Phase 2._
 
 ## Done
 - Phase 0: subscription login verified (no API keys), Claude Code 2.1.301 recorded, all runner flags verified
@@ -9,8 +9,11 @@ _Last updated: 2026-10-16 — end of Phase 1._
 - Phase 1: 32 verified references (`paper/refs.bib`), related work + gap (`docs/related-work.md`),
   `PREREGISTRATION.md` frozen at `231866f`.
 
+- Phase 2: environment, MCP server, detector, generators, `sandbank demo --stub` PASS, 67 tests.
+
 ## Next
-- Phase 2: environment (`env/`), data, MCP server, detector, probe/episode generators, stub demo, tests.
+- Phase 3: runner (`claude -p` wrapper, usage capture, batching, limit-aware pause/resume, judge batching,
+  CLI `run`/`plan`/`validate`), then one live Haiku probe + check-in end-to-end.
 
 ## Open issues
 - FATF edition / 2018 PML report / MAS status: re-check by hand before submission (see phase-1 report).
