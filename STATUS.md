@@ -1,6 +1,6 @@
 # STATUS
 
-_Last updated: 2026-10-16 — end of Phase 3._
+_Last updated: 2026-10-16 — Phase 4 in progress._
 
 ## Done
 - Phase 0: subscription login verified (no API keys), Claude Code 2.1.301 recorded, all runner flags verified
@@ -13,8 +13,14 @@ _Last updated: 2026-10-16 — end of Phase 3._
 
 - Phase 3: runner, judge, `validate`; one live Haiku probe + check-in end-to-end PASS.
 
+## In progress
+- Phase 4 pilot running detached (started 2026-10-16 16:09 +07):
+  `uv run sandbank run --config configs/pilot.yaml --results results && uv run sandbank run --config configs/comprehension.yaml --results results`
+  → log `results/pilot.log`, checkpoint `results/progress.json`. Safe to kill and re-run (skips completed runs).
+  Create `results/STOP` to make a paused runner exit.
+
 ## Next
-- Phase 4: pilot configs (N=4 Haiku / 2 Sonnet), validation (floor, P4 ceiling, comprehension, detector P/R
+- Phase 4 (rest): pilot configs (N=4 Haiku / 2 Sonnet), validation (floor, P4 ceiling, comprehension, detector P/R
   export), `sandbank plan`. Pilot likely waits for the weekly window reset (Mon 2026-10-19 18:00 +07).
 
 ## Open issues
