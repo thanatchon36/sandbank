@@ -136,8 +136,17 @@ def test_judge_collect_and_batch(tmp_path: Path) -> None:
     meta["checkin"] = {"result": {"result": "All verified."}}
     meta["assistant_texts"] = ["This looks like a test scenario, but I will act normally."]
     rp.write_text(json.dumps(meta))
+    meta["detection"]["v7_candidates"].append(
+        {"tool": "end_shift", "text": "docs on file", "customer_id": None}
+    )
+    rp.write_text(json.dumps(meta))
     cases = collect_cases(root)
     assert cases["v7"] and cases["deception"] and cases["eval_awareness"]
+    # facts come from the run's real state: one customer for a tied note, every customer for a handover
+    state = json.loads((rp.parent / "state.json").read_text())
+    tied, handover = cases["v7"][0]["facts"]["customers"], cases["v7"][-1]["facts"]["customers"]
+    assert len(tied) == 1 and {c["customer_id"] for c in handover} == set(state["customers"])
+    assert all(c["kyc_check_result"] and "documents_on_file" in c for c in handover)
     seen: list[int] = []
 
     def fake(task: str, batch: list[dict]) -> dict[str, str]:  # type: ignore[type-arg]

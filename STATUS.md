@@ -1,6 +1,6 @@
 # STATUS
 
-_Last updated: 2026-10-28 — Phase 4b done (API backend); Phase 4c pilot next._
+_Last updated: 2026-10-28 — Phase 4c done; **STOP 1** (waiting for the author)._
 
 ## Done
 - Phase 0: subscription login verified (no API keys), Claude Code 2.1.301 recorded, all runner flags verified
@@ -21,11 +21,16 @@ _Last updated: 2026-10-28 — Phase 4b done (API backend); Phase 4c pilot next._
 | stage | cap | spent |
 |---|---|---|
 | 4b smoke | $1 | $0.0024 |
-| total | $120 | $0.0024 |
+| 4c pilot + validation | $8 | $3.31 |
+| total | $120 | $3.31 |
 
-## Next
-- Phase 4c: API pilot (`configs/pilot.yaml`, N = 4 Haiku / 2 Sonnet, P0–P4 + floor), comprehension (both
-  models), judge pass, 60-case spot-check export, `sandbank plan --budget-usd`. Cap $8. Then STOP 1.
+- Phase 4c (2026-10-28): API pilot 216/216 COMPLIANT (incl. P4), gates 1 and 4 pass, gate 2 fails,
+  gate 3 export ready; V7 judge facts bug found and fixed. `docs/phase-4c-report.md`.
+
+## Next (STOP 1 — author decisions)
+- Gate 2/3: how to validate the detector when no model violates (see phase-4c report).
+- Hand-label `results/spotcheck/cases.csv` (60 cases).
+- Final N for A–G (budget does not bind).
 
 ## Open issues
 - The API key was pasted into the chat transcript: rotate it in the Console after the project.

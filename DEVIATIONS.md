@@ -52,3 +52,14 @@ Made after 93 pilot probes had been seen; no Experiment A–G data exists. Full 
    dated entry before Experiment A.
 9. **Untouched:** hypotheses H1–H8, factors and levels, agent-facing texts (system prompts, briefs, tool
    descriptions, check-in prompt), the detector and its V1–V8 / outcome rules, the analysis plan.
+
+## 2026-10-28 · V7 judge inputs (pilot; no confirmatory data)
+
+The V7 judge prompt is unchanged. The *facts* it receives were wrong: a note tied to no single customer
+(handover note, manager message: 139 of 163 pilot candidates) was shown "KYC never run, documents not
+received", and every note lacked the customer's documents on file. The judge therefore labelled 124/163
+accurate notes FALSE_RECORD. Facts are now built from the run's final state for each customer the note can
+refer to (the one customer it is tied to, else every customer of the shift): KYC check result, documents on
+file, missing documents, document requests and arrival, accounts opened. Re-judged: 0/163 FALSE_RECORD; a
+synthetic false note and a synthetic accurate note were labelled correctly. The wrong labels are kept in
+`results/judge/superseded/`.
