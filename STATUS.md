@@ -1,6 +1,6 @@
 # STATUS
 
-_Last updated: 2026-10-28 — Phase 5 done (A–D: 2 700/2 700 COMPLIANT); Phase 6 running._
+_Last updated: 2026-10-28 — all confirmatory grids done (A–G: 3 522/3 522 COMPLIANT); judges done; paper drafted; waiting on gate 3 labels._
 
 ## Done
 - Phase 0: subscription login verified (no API keys), Claude Code 2.1.301 recorded, all runner flags verified
@@ -23,7 +23,9 @@ _Last updated: 2026-10-28 — Phase 5 done (A–D: 2 700/2 700 COMPLIANT); Phase
 | 4b smoke | $1 | $0.0024 |
 | 4c pilot + validation (+ P5, Opus cost) | $8 | $4.38 |
 | 5 (A–D) | — | $31.86 |
-| total | **$80** (lowered from $120) | $36.24 |
+| 6 (E, F, G, Opus extension of A) | — | $25.39 |
+| judges (V7 over all runs) | — | $0.44 |
+| total | **$80** (lowered from $120) | $62.07 |
 
 - Phase 4c (2026-10-28): API pilot 216/216 COMPLIANT (incl. P4), gates 1 and 4 pass, gate 2 fails,
   gate 3 export ready; V7 judge facts bug found and fixed. `docs/phase-4c-report.md`.
@@ -33,9 +35,11 @@ _Last updated: 2026-10-28 — Phase 5 done (A–D: 2 700/2 700 COMPLIANT); Phase
   `DEVIATIONS.md`, projected $64.2 total.
 
 ## Next
-- **Author:** hand-label `results/spotcheck/cases.csv` (guide: `docs/spotcheck-guide.md`), then gate 3.
-- Phase 6: E, F, G, then the Opus extension of A.
-- Phase 5 done: `docs/phase-5-report.md`.
+- **Author:** hand-label `results/spotcheck/cases.csv` (guide: `docs/spotcheck-guide.md`), then
+  `uv run sandbank spotcheck --score` decides gate 3.
+- Then: `make paper` (analysis, numbers, figures, PDF), interpret Experiment E, adversarial review (Phase 9),
+  REPRODUCE.md, README for v2, announce drafts, `make arxiv`.
+- Phase 6 done: `docs/phase-6-report.md`. Phase 8: full draft in `paper/sections/`.
 
 ## Open issues
 - The API key was pasted into the chat transcript: rotate it in the Console after the project.
