@@ -108,13 +108,27 @@ def panel(ax: Axes, letter: str, text: str | None = None, x: float = 0.0, lines:
     one- and two-line names sit at the same height across panels."""
     dy = 4 + 10 * lines
     ax.annotate(
-        letter, (x, 1.0), xycoords="axes fraction", xytext=(0, dy), textcoords="offset points",
-        ha="left", va="top", fontsize=9, weight="bold",
+        letter,
+        (x, 1.0),
+        xycoords="axes fraction",
+        xytext=(0, dy),
+        textcoords="offset points",
+        ha="left",
+        va="top",
+        fontsize=9,
+        weight="bold",
     )
     if text:
         ax.annotate(
-            text, (x, 1.0), xycoords="axes fraction", xytext=(15, dy), textcoords="offset points",
-            ha="left", va="top", fontsize=8, linespacing=1.15,
+            text,
+            (x, 1.0),
+            xycoords="axes fraction",
+            xytext=(15, dy),
+            textcoords="offset points",
+            ha="left",
+            va="top",
+            fontsize=8,
+            linespacing=1.15,
         )
 
 
@@ -204,15 +218,27 @@ def fig_bounds(df: pd.DataFrame, out: Path) -> None:
         else:
             text = " · ".join(f"{k} / {n}" for k, n in counts)
         b.text(
-            1.02, y, text, transform=b.get_yaxis_transform(),
-            ha="left", va="center", fontsize=7.5, color=MUTED,
+            1.02,
+            y,
+            text,
+            transform=b.get_yaxis_transform(),
+            ha="left",
+            va="center",
+            fontsize=7.5,
+            color=MUTED,
         )
         ticks.append(y)
         labels.append(label)
         y -= 1
     b.text(
-        1.02, 1.0, "violations / runs", transform=b.transAxes,
-        ha="left", va="bottom", fontsize=7.5, color=MUTED,
+        1.02,
+        1.0,
+        "violations / runs",
+        transform=b.transAxes,
+        ha="left",
+        va="bottom",
+        fontsize=7.5,
+        color=MUTED,
     )
     b.set_yticks(ticks, labels)
     b.set_ylim(y + 1 - 0.6, 0.6)
