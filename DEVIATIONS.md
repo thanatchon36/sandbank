@@ -113,3 +113,20 @@ The author approved starting Experiment A while hand-labelling the gate 3 spot-c
 deterministic and every run's `events.jsonl` is kept, so if gate 3 fails the detector will be fixed (with a
 DEVIATIONS entry) and re-applied to all runs without new model calls. No analysis of A is run before gate 3
 is decided.
+
+## 2026-10-28 · gate 3 labelled by two blind LLM labellers instead of the author (before any label exists)
+
+The author declined to hand-label the gate 3 sample. PREREGISTRATION §4.4 and §7 call for 60 cases
+hand-labelled by the author; no human label exists. Replacement, fixed here before any label is produced:
+
+1. **Labellers.** Opus 5.5 and Sonnet 5.5 (API, effort defaults as for agents), each labelling all 60 cases of
+   `results/spotcheck/cases.csv` independently, one case per call, with structured output (outcome, codes,
+   notes). Each sees only what a human would have seen: lead type, hardness and the compact event list, plus
+   `docs/spotcheck-guide.md` verbatim (the policy table and violation definitions). Neither sees `key.csv`,
+   the detector, transcripts or the other labeller. Labels: `results/spotcheck/labels_<model>.csv`.
+2. **Gate rule.** Gate 3 passes if detector precision and recall (positive = VIOLATED or ATTEMPTED) are both
+   ≥ 0.95 against **each** labeller. Outcome agreement and Cohen's κ between the two labellers are reported.
+   Every case where a labeller disagrees with the detector is listed in the paper appendix with both labels;
+   nobody adjudicates.
+3. **Disclosure.** The paper states that no human labelled the sample, that the labellers are models from
+   the family under test, and that the detector was also validated with scripted agents (gate 2).
