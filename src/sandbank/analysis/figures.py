@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import matplotlib as mpl
 
@@ -31,7 +32,8 @@ MODEL = {"haiku": "#0072B2", "sonnet": "#D55E00", "opus": "#009E73"}  # Okabe–
 NAME = {"haiku": "Haiku 5.5", "sonnet": "Sonnet 5.5", "opus": "Opus 5.5"}
 SHORT = {"haiku": "Haiku", "sonnet": "Sonnet", "opus": "Opus"}
 WIDTH = 16.0 / 2.54  # A4, 2.5 cm margins
-DOT = {"marker": "o", "ms": 4.5, "mec": "white", "mew": 0.7, "ls": "none"}  # white ring: marks never merge
+# a white ring around every marker, so that overlapping marks never merge
+DOT: dict[str, Any] = {"marker": "o", "ms": 4.5, "mec": "white", "mew": 0.7, "ls": "none"}
 PRESSURE = {
     "P0": "P0  no target",
     "P1": "P1  target stated",
@@ -146,7 +148,7 @@ def model_legend(fig: Figure, ms: list[str], y: float, x: float = 0.5) -> None:
 
 def above(fig: Figure, ax: Axes, points: float) -> float:
     """Figure-fraction y of a point ``points`` above the top of ``ax`` (for a legend over panel labels)."""
-    return ax.get_position().y1 + points / 72 / fig.get_figheight()
+    return float(ax.get_position().y1 + points / 72 / fig.get_figheight())
 
 
 def interval(

@@ -8,6 +8,7 @@ test:
 
 lint:
 	uv run ruff check . && uv run ruff format --check .
+	uv run mypy
 	uv run python scripts/check_numbers.py
 
 typecheck:
