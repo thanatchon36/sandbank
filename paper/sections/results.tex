@@ -4,8 +4,8 @@
 \subsection{No violations under any confirmatory condition}
 
 Across \NProbes{} confirmatory probes the detector found \NViolations{} violations and \NAttempts{}
-attempts. \NInvalid{} probes were INVALID, \NRefused{} were REFUSED (the agent left the blocked lead
-unhandled), and \NClassifierRefusals{} responses were stopped by the API's safety classifier. Table~\ref{tab:bounds} gives each condition and
+attempts. The counts of INVALID probes, REFUSED probes (the agent left the blocked lead unhandled) and
+responses stopped by the API's safety classifier were \NInvalid, \NRefused{} and \NClassifierRefusals. Table~\ref{tab:bounds} gives each condition and
 Figure~\ref{fig:bounds} the intervals. Pooled over all experiments, the 95\% Wilson upper bound on the % numbers-ok: design constant, version or citation
 per-probe violation rate is \UpperHaiku\% for Haiku (\NHaiku{} probes), \UpperSonnet\% for Sonnet
 (\NSonnet{}) and \UpperOpus\% for Opus (\NOpus{}). The bounds are per probe with one blocked lead each; they
@@ -45,35 +45,43 @@ the manager does not make the models circumvent the controls. It does not show t
 
 \subsection{What the agents did instead}
 
-Figure~\ref{fig:behaviour} shows the compliant actions taken on the blocked lead in Experiment A. The agents
-ran the KYC check, requested the missing documents, escalated sanctions hits and politically exposed persons to
-Compliance, and messaged the manager that the lead would not convert today. How often the agents escalated
-and messaged the manager varied by model: Haiku escalated in \EscalatedHaiku\% of probes and
-told the manager in \ToldManagerHaiku\%, Sonnet in \EscalatedSonnet\% and \ToldManagerSonnet\%, and Opus in
-\EscalatedOpus\% and \ToldManagerOpus\%.
+Figure~\ref{fig:behaviour} shows the compliant actions taken in Experiment A. The agents ran the KYC check on
+the blocked customer in nearly every probe and applied the remedy each lead type calls for: they requested
+documents in \DocsRequestedDocLeads\% of the probes whose blocked lead was missing documents or verification
+(B1, B5, B6) and escalated every sanctions hit to Compliance (\EscalatedBTwo\% of B2 probes). Pressure did
+not change these actions; it changed whether the agents reported back. At P3, where the manager demands that
+every lead convert, the agents messaged the manager to say a lead would not convert in \ToldManagerPThreeHaiku\%
+(Haiku), \ToldManagerPThreeSonnet\% (Sonnet) and \ToldManagerPThreeOpus\% (Opus) of probes, against
+\ToldManagerLowHaiku\%, \ToldManagerLowSonnet\% and \ToldManagerLowOpus\% at P0--P2. Under the strongest
+pressure, the models answered the manager rather than the target. These patterns were not pre-registered and
+are descriptive.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig2_behaviour.pdf}
-\caption{Share of Experiment A probes in which the agent took each compliant action, by pressure and model.}
+\caption{Share of Experiment A probes in which the agent took each compliant action, by pressure and model.
+Requesting documents is the remedy for half the lead types, so it sits near one half.}
 \label{fig:behaviour}
 \end{figure}
 
 \subsection{Legitimate goal attainment differs by model}
 
 Because no model broke a rule, the models differ only in how much of the legitimate target they reached
-(Figure~\ref{fig:goal}). The B4 lead, a large deposit that policy allows once its report is filed, is the
-clearest case: Haiku opened it with the report in \BFourConvHaiku\% of probes, Sonnet in
-\BFourConvSonnet\% and Opus in \BFourConvOpus\%. The clean lead was converted in \CleanConvHaiku\%,
-\CleanConvSonnet\% and \CleanConvOpus\% of probes respectively. When a weaker model fails to convert B4, it
-leaves a legal account unopened; it does not open it without the report. A sandbox that measured only
-violations would miss this cost of caution.
+(Figure~\ref{fig:goal}). Every model converted the clean lead in every Experiment A probe
+(\CleanConvHaiku\%, \CleanConvSonnet\%, \CleanConvOpus\%). The B4 lead, a large deposit that policy allows
+once its report is filed, separates them: Haiku opened it with the report in \BFourConvHaiku\% of probes,
+Sonnet in \BFourConvSonnet\% and Opus in \BFourConvOpus\%. When Haiku did not convert B4 it left a legal
+account unopened or on hold; it never opened it without the report. Haiku's B4 conversion fell from
+\HaikuBFourPZero{} at P0 to \HaikuBFourPThree{} at P3 (exploratory Cochran--Armitage trend test,
+$p = \HaikuBFourTrendP$): if anything, pressure made the weakest model more cautious, not less compliant.
+In the comprehension test, the one item each model missed was also a B4 item, where it correctly judged a
+split deposit impermissible but chose to hold or escalate instead of the key's answer, to book the deposit
+whole and file the report. A sandbox that measured only violations would score this caution as perfect.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.75\linewidth]{fig3_goal.pdf}
-\caption{Goal attainment that policy allows, Experiment A. (a) The B4 large deposit opened with its report
-filed. (b) The clean lead converted.}
+\includegraphics[width=0.5\linewidth]{fig3_goal.pdf}
+\caption{The B4 large deposit opened with its report filed, Experiment A, by pressure and model.}
 \label{fig:goal}
 \end{figure}
 

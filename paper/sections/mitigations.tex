@@ -1,23 +1,34 @@
 \section{Mitigations}
 \label{sec:mitigations}
 
-Experiment E tested four cheap interventions at P3 on Haiku, on leads B1, B3 and B6 (fixed in the config
-before A, as a placeholder for ``the three lead types with the highest violation rate in A'', which could not
-be ranked). Since the baseline had no violations, no mitigation could reduce them, and E becomes a measurement
-of what each intervention costs in legitimate work. Figure~\ref{fig:mitigations} compares clean-lead
-conversion with the matching no-mitigation cells of Experiment A (\CleanConvNone\%): \CleanConvMOne\% with
-the rulebook summary in the brief (M1), \CleanConvMThree\% with a target-extension tool (M3),
-\CleanConvMFour\% with a mandatory compliance justification (M4) and \CleanConvMSix\% with hard controls plus
-the extension tool (M6).
-% INTERPRET after `sandbank analyze`: direction and size of each difference, extension use under M3/M6.
+Experiment E tested four cheap interventions at P3 on Haiku, on leads B1, B3 and B6. These were fixed in the
+config before Experiment A as a stand-in for ``the three lead types with the highest violation rate in A'',
+which could not be ranked. With no violations at baseline, no mitigation could reduce them, and E became a
+test of what each intervention costs. On the pre-registered cost measure, none cost anything: the clean lead
+converted in every probe in every arm (Table~\ref{tab:mitigations}), and none of the three blocked leads can
+be converted legally, so the measure had nothing to lose. The interventions did change how the agent
+worked, descriptively: the rulebook summary (M1) and the extension tool (M3, M6) cut escalations to Compliance, and with an
+extension available the agent asked for one in a few probes. Mean turns per probe barely moved.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.75\linewidth]{fig4_mitigations.pdf}
-\caption{Experiment E (Haiku, P3, leads B1, B3, B6). (a) Clean-lead conversion relative to no mitigation,
-percentage points, bootstrap 95\% interval. (b) Mean agent turns per probe.} % numbers-ok: design constant, version or citation
-\label{fig:mitigations}
-\end{figure}
+\begin{table}[t]
+\centering\small
+\caption{Experiment E (Haiku, P3, leads B1, B3, B6) against the matching Experiment A cells. Percent of
+probes, except turns.}
+\label{tab:mitigations}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+ & Clean lead converted & Escalated & Asked for extension & Mean turns \\
+\midrule
+None (Experiment A) & \CleanConvNone & \EscalatedNone & \ExtReqNone & \TurnsNone \\
+M1 rulebook summary & \CleanConvMOne & \EscalatedMOne & \ExtReqMOne & \TurnsMOne \\
+M3 target extension & \CleanConvMThree & \EscalatedMThree & \ExtReqMThree & \TurnsMThree \\
+M4 written justification & \CleanConvMFour & \EscalatedMFour & \ExtReqMFour & \TurnsMFour \\
+M6 hard controls + extension & \CleanConvMSix & \EscalatedMSix & \ExtReqMSix & \TurnsMSix \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-For a bank the reading is practical: when the baseline is already compliant, the useful question about a
-guardrail is what it costs, and a sandbox can price that cost before deployment.
+For a bank the reading is practical. When the baseline is already compliant, the question about a guardrail
+is what it costs, and the cost has to be measured on work that can actually be lost. Experiment E's design,
+fixed before the null was known, could not measure that; a follow-up should place mitigations on leads, such
+as B4, where caution has a price.

@@ -152,72 +152,37 @@ def fig_behaviour(df: pd.DataFrame, out: Path) -> None:
         ax.set_xlabel(lab, fontsize=8)
         panel(ax, f"({tag})")
     axes[0].set_ylabel("Probes, %")
-    axes[0].legend(loc="lower left", bbox_to_anchor=(0, 1.08), ncol=3, handlelength=1.2)
     fig.tight_layout()
+    top_legend(fig, axes[0])
     save(fig, out, "fig2_behaviour")
 
 
 def fig_goal(df: pd.DataFrame, out: Path) -> None:
-    """Goal attainment that policy allows: (a) the B4 large deposit opened with its report filed,
-    (b) the clean lead converted, by pressure and model (Experiment A)."""
-    A = df[df.experiment == "A"]
+    """Goal attainment that policy allows: the B4 large deposit opened with its report filed, by pressure
+    and model (Experiment A). The clean lead converted in every probe, so it is not plotted."""
+    A = df[(df.experiment == "A") & (df.lead == "B4")]
     ps = sorted(A.pressure.unique())
-    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDTH * 0.75, 2.2), sharey=True)
-    for ax, sub, col, tag, lab in (
-        (a, A[A.lead == "B4"], "converted", "(a)", "B4 large deposit opened\n(with its report)"),
-        (b, A, "clean_converted", "(b)", "Clean lead converted"),
-    ):
-        w = 0.8 / len(models(sub))
-        for i, m in enumerate(models(sub)):
-            ys = [100 * sub[(sub.model == m) & (sub.pressure == p)][col].mean() for p in ps]
-            ax.bar(
-                np.arange(len(ps)) + (i - (len(models(sub)) - 1) / 2) * w,
-                ys,
-                w * 0.95,
-                color=MODEL[m],
-                label=NAME[m],
-            )
-        ax.set_xticks(range(len(ps)), ps)
-        ax.set_ylim(0, 105)
-        ax.set_xlabel(lab, fontsize=8)
-        panel(ax, tag)
-    a.set_ylabel("Probes, %")
-    a.legend(loc="lower left", bbox_to_anchor=(0, 1.08), ncol=3, handlelength=1)
+    ms = models(A)
+    fig, ax = plt.subplots(figsize=(WIDTH * 0.5, 2.2))
+    w = 0.8 / len(ms)
+    for i, m in enumerate(ms):
+        ys = [100 * A[(A.model == m) & (A.pressure == p)].converted.mean() for p in ps]
+        ax.bar(np.arange(len(ps)) + (i - (len(ms) - 1) / 2) * w, ys, w * 0.95, color=MODEL[m], label=NAME[m])
+    ax.set_xticks(range(len(ps)), ps)
+    ax.set_ylim(0, 105)
+    ax.set_ylabel("B4 opened with its report, %")
+    ax.set_xlabel("Pressure (Experiment A)")
     fig.tight_layout()
+    top_legend(fig, ax)
     save(fig, out, "fig3_goal")
 
 
-def fig_mitigations(mit: pd.DataFrame, out: Path) -> None:
-    """Experiment E: clean-lead conversion difference vs no mitigation (bootstrap 95% CI) and mean turns."""
-    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDTH * 0.75, 2.0))
-    m = mit[mit.mitigation != "none"].reset_index(drop=True)
-    y = np.arange(len(m))
-    a.errorbar(
-        100 * m.conversion_diff_vs_none,
-        y,
-        xerr=[100 * (m.conversion_diff_vs_none - m.diff_lo), 100 * (m.diff_hi - m.conversion_diff_vs_none)],
-        fmt="o",
-        color=MODEL["haiku"],
-        ms=3.5,
-        lw=1.2,
-        capsize=0,
+def top_legend(fig: Figure, ax: Axes) -> None:
+    """One legend above the panels (a legend anchored to one narrow panel squeezes the layout)."""
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(
+        handles, labels, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=len(labels), handlelength=1.2
     )
-    a.axvline(0, color=MUTED, lw=0.6)
-    a.set_yticks(y, m.mitigation)
-    a.invert_yaxis()
-    a.grid(axis="x")
-    a.grid(axis="y", visible=False)
-    a.set_xlabel("Clean-lead conversion vs none, pp")
-    panel(a, "(a)")
-    b.barh(np.arange(len(mit)), mit.mean_turns, color=[MUTED] + [MODEL["haiku"]] * len(m), height=0.6)
-    b.set_yticks(np.arange(len(mit)), mit.mitigation)
-    b.invert_yaxis()
-    b.grid(axis="x")
-    b.grid(axis="y", visible=False)
-    b.set_xlabel("Mean agent turns per probe")
-    panel(b, "(b)")
-    fig.tight_layout()
-    save(fig, out, "fig4_mitigations")
 
 
 def make_all(agg: Path, out: Path) -> list[str]:
@@ -237,7 +202,4 @@ def make_all(agg: Path, out: Path) -> list[str]:
     fig_bounds(df, out)
     fig_behaviour(df, out)
     fig_goal(df, out)
-    mit = pd.read_csv(agg / "mitigations.csv")
-    if (mit.mitigation != "none").any():
-        fig_mitigations(mit, out)
     return sorted(p.name for p in out.glob("*.pdf"))
