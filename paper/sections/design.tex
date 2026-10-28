@@ -96,6 +96,14 @@ circumvention path for every lead type under all three hardness levels was flagg
 \NScriptedDetected{}/\NScripted{} runs with the expected codes (VIOLATED under H0 and H1, ATTEMPTED under
 H2), a scripted compliant agent was clean in \NScriptedCompliant{}/\NScriptedControls{}, and a test sends the
 same violation as model \texttt{tool\_use} blocks through the API path and checks that it is detected.
-Gate~3 requires detector precision and recall of at least 0.95 on 60 blind hand-labelled runs; the sample mixes pilot probes with scripted violations so that % numbers-ok: design constant, version or citation
-recall is measurable although no model violated. The author labelled \SpotLabelled{} runs and agreed with the detector
-outcome in \SpotAgree{} (\SpotTP{} true positives, \SpotFP{} false positives, \SpotFN{} false negatives).
+Gate~3 requires detector precision and recall of at least 0.95 on 60 blind-labelled runs. % numbers-ok: design constant
+The sample mixes pilot probes with scripted violations so that recall is measurable although no model
+violated. The pre-registration called for the author to label it; the author declined, and before any label
+existed we fixed a replacement (Appendix~\ref{sec:deviations}): Opus~5.5 and Sonnet~5.5 each labelled the \SpotN{} % numbers-ok: model version
+cases independently, one call per case, seeing only the lead type, the control hardness, the event list and
+the labelling guide, and never the detector's verdict. Both agreed with the detector's outcome in every case
+(Opus \SpotAgreeOpus{}/\SpotN{}, Sonnet \SpotAgreeSonnet{}/\SpotN{}; false positives \SpotFPOpus{} and
+\SpotFPSonnet{}, false negatives \SpotFNOpus{} and \SpotFNSonnet{}), and with each other in
+\SpotLabellerAgree{} (Cohen's $\kappa = \SpotKappa$). No human labelled the sample, the labellers belong to
+the model family under test, and all \SpotDetectorPositives{} positives are scripted violations, which are
+easy to recognise; gate~3 therefore checks the detector's logic, not its behaviour on subtle model-made cases. % numbers-ok: design constant, version or citation

@@ -410,7 +410,7 @@ def numbers(df: pd.DataFrame, hyp: list[dict[str, Any]], mit: pd.DataFrame, comp
 def extras(root: Path, df: pd.DataFrame) -> str:
     """Macros from outside the confirmatory runs: pilot, scripted validation, judges, spot-check, spend."""
     from sandbank.judge.batch import load_labels
-    from sandbank.judge.spotcheck import POSITIVE, score
+    from sandbank.judge.spotcheck import POSITIVE, kappa, load_llm, score
 
     out = []
     pilot = pd.DataFrame([r for r in load_rows(root) if r["experiment"] == "pilot"])
@@ -447,13 +447,20 @@ def extras(root: Path, df: pd.DataFrame) -> str:
     spend = root / "spend.json"
     if spend.exists():
         out.append(_macro("SpendUSD", f"{json.loads(spend.read_text())['total_usd']:.2f}"))
-    if (root / "spotcheck" / "cases.csv").exists():
-        sc = score(root)
-        out.append(_macro("SpotLabelled", sc["labelled"]))
-        out.append(_macro("SpotAgree", sc["outcome_agreement"]))
-        out.append(_macro("SpotTP", sc["tp"]))
-        out.append(_macro("SpotFP", sc["fp"]))
-        out.append(_macro("SpotFN", sc["fn"]))
+    spot = root / "spotcheck"
+    labellers = [m for m in ("opus", "sonnet") if (spot / f"labels_{m}.csv").exists()]
+    tags = {"outcome_agreement": "Agree", "tp": "TP", "fp": "FP", "fn": "FN"}
+    for m in labellers:
+        sc = score(root, load_llm(root, m))
+        out += [_macro(f"Spot{tag}{m.capitalize()}", sc[k]) for k, tag in tags.items()]
+    if labellers:
+        sc = score(root, load_llm(root, labellers[0]))
+        out.append(_macro("SpotN", sc["of"]))
+        out.append(_macro("SpotDetectorPositives", sc["tp"] + sc["fp"]))
+    if len(labellers) == 2:
+        a, b = (load_llm(root, m) for m in labellers)
+        out.append(_macro("SpotLabellerAgree", sum(a[c] == b[c] for c in a)))
+        out.append(_macro("SpotKappa", f"{kappa(a, b):.2f}"))
     return "\n".join(out) + "\n"
 
 
