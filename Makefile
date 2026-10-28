@@ -20,10 +20,12 @@ check: lint typecheck test
 reproduce:
 	uv run sandbank analyze
 
-# The paper from cached results: numbers, tables and figures, then the PDF (no model calls).
+# The paper from cached results: numbers, tables and figures, the PDF, then the web version
+# (docs/paper/, needs pandoc). No model calls.
 paper: reproduce
 	uv run python scripts/check_numbers.py
 	cd paper && tectonic -X compile main.tex
+	uv run python scripts/web_paper.py
 
 # arXiv source bundle (paper/arxiv.tar.gz) plus the title, abstract and comments for the form.
 arxiv: paper

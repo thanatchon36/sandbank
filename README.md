@@ -8,7 +8,9 @@
 [![Pre-registered](https://img.shields.io/badge/pre--registered-a50e428-blue)](PREREGISTRATION.md)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23732290.svg)](https://doi.org/10.5281/zenodo.23732290)
 
-📄 **[Paper (PDF)](paper/main.pdf)** · 📊 **[Figures](figures/out/)** · 🧾 **[Pre-registration](PREREGISTRATION.md)** ·
+📄 **[Read the paper on the web](https://thanatchon36.github.io/sandbank/paper/)** ·
+⬇️ **[Download the PDF](https://github.com/thanatchon36/sandbank/raw/main/paper/main.pdf)** ·
+📊 **[Figures](figures/out/)** · 🧾 **[Pre-registration](PREREGISTRATION.md)** ·
 🔀 **[Deviations](DEVIATIONS.md)** · 🔁 **[Reproduce](REPRODUCE.md)** · ⚖️ **[Responsible use](RESPONSIBLE_USE.md)** ·
 🤗 **[Run data](https://huggingface.co/datasets/thanatchon36/sandbank)**
 
