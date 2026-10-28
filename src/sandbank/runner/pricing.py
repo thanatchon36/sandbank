@@ -3,7 +3,7 @@
 Prices are USD per million tokens, first-party Claude API, standard tier, 5-minute cache writes
 (1.25x base input). Source: Anthropic model and pricing tables as of PRICES_AS_OF; re-check against
 https://platform.claude.com/docs/en/about-claude/pricing before a new grid and record any change in
-DECISIONS.md. "Cost" in the paper always means this list-price spend computed from measured tokens.
+DEVIATIONS.md. "Cost" in the paper always means this list-price spend computed from measured tokens.
 """
 
 from __future__ import annotations
@@ -50,7 +50,7 @@ ALIASES: dict[str, str] = {
     "opus": "claude-opus-5-5",
 }
 
-# Each model's documented default effort, pinned explicitly (MISSION_V2 §2.1).
+# Each model's documented default effort, pinned explicitly.
 EFFORT: dict[str, str] = {
     "claude-haiku-5-5": "medium",
     "claude-sonnet-5-5": "high",

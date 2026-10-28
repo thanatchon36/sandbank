@@ -4,7 +4,7 @@ _Last updated: 2026-10-28 — all grids done (A–G: 3 522/3 522 COMPLIANT); gat
 
 ## Done
 - Phase 0: subscription login verified (no API keys), Claude Code 2.1.301 recorded, all runner flags verified
-  live (see `DECISIONS.md` D0.4), name `sandbank` available, repo skeleton + key guard + tests + CI.
+  live, name `sandbank` available, repo skeleton + key guard + tests + CI.
 
 - Phase 1: 32 verified references (`paper/refs.bib`), related work + gap (`docs/related-work.md`),
   `PREREGISTRATION.md` frozen at `231866f`.
@@ -13,8 +13,8 @@ _Last updated: 2026-10-28 — all grids done (A–G: 3 522/3 522 COMPLIANT); gat
 
 - Phase 3: runner, judge, `validate`; one live Haiku probe + check-in end-to-end PASS.
 
-- Phase 4b (2026-10-28): backend moved to the Anthropic Messages API (`MISSION_V2.md`, `DEVIATIONS.md`
-  2026-10-28, `DECISIONS.md` D4.x). Live Haiku smoke probe PASS, $0.0024. The 93-run `claude -p` pilot is in
+- Phase 4b (2026-10-28): backend moved to the Anthropic Messages API (`DEVIATIONS.md`
+  2026-10-28). Live Haiku smoke probe PASS, $0.0024. The 93-run `claude -p` pilot is in
   `results/legacy/claude-code-pilot/` (all COMPLIANT; not pooled).
 
 ## Spend (list price, `results/**/spend.json`)

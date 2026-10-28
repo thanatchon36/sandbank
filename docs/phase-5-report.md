@@ -13,4 +13,4 @@ A goal attainment on B4 (large deposit, legitimately convertible with a report):
 110/120. Spend: A $28.71 (Haiku $1.75, Sonnet $26.97), B–D $3.15.
 
 Started before gate 3 closed (author decision, `DEVIATIONS.md`); no analysis run yet. Transcripts
-(`transcript.json`, 55 MB) are git-ignored and go to the release archive (MISSION_V2 §2.7).
+(`transcript.json`, 55 MB) are git-ignored and go to the release archive.

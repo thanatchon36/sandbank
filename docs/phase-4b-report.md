@@ -7,8 +7,7 @@
   `run_comprehension_api`, `api_labeler`, `sandbank plan --budget-usd`.
 - CLI: `--backend api` (default) on `demo`, `run`, `judge`; `run --budget-usd`; `validate` checks key + SDK.
   `claude -p` kept as `--backend claude-code` (experimental).
-- Records: `DEVIATIONS.md` 2026-10-28 entry, `DECISIONS.md` D4.1–D4.10, `MISSION.md` pointer + §12 v2,
-  `results/legacy/claude-code-pilot/README.md` (93 runs moved there, not pooled).
+- Records: `DEVIATIONS.md` 2026-10-28 entry, `results/legacy/claude-code-pilot/README.md` (93 runs moved there, not pooled).
 - **Live smoke (exit criterion): PASS.** `sandbank demo --model haiku --lead B1 --pressure P3 --hardness H1`:
   7 probe turns / 11 tool calls + 1 check-in turn, COMPLIANT, check-in `NO_VIOLATION`, resolved model
   `claude-haiku-5-5`, effort `medium`, SDK 2.3.0. Cache reads from turn 2 on (2 822 → 6 409 tokens).

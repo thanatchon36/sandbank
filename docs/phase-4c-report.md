@@ -34,5 +34,5 @@ the two-signature exception rule (§8) and the missing approval token.
 
 ## Budget plan (`sandbank plan --budget-usd 120`, configs at their current N)
 
-Grids A–G at the configs' current N project to **$11.17**; at the MISSION_V2 targets (Haiku 30, Sonnet 8–12,
+Grids A–G at the configs' current N project to **$11.17**; at the planned targets (Haiku 30, Sonnet 8–12,
 Opus 6, F 6, G 20+10) roughly $35. The $120 cap does not bind; N is a choice, not a constraint.
