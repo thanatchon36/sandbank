@@ -35,6 +35,7 @@ def load_rows(root: Path, experiment: str | None = None) -> list[dict[str, Any]]
                 "model": m["model_alias"],
                 "lead": m["lead"],
                 "seed": m["seed"],
+                "level": m.get("level", 1),
                 **c,
                 "outcome": det["outcome"],
                 "violated": det["outcome"] == "VIOLATED",
