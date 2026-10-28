@@ -140,7 +140,7 @@ def model_legend(fig: Figure, ms: list[str], y: float, x: float = 0.5) -> None:
     """One legend for the whole figure, above the panels: a line through a dot, one entry per model."""
     if not ms:
         return
-    handles = [Line2D([], [], color=MODEL[m], lw=1.6, **{**DOT, "ls": "-"}) for m in ms]
+    handles = [Line2D([], [], color=MODEL[m], lw=1.6, marker="o", ms=4.5, mec="white", mew=0.7) for m in ms]
     fig.legend(handles, [NAME[m] for m in ms], loc="lower center", bbox_to_anchor=(x, y), ncol=len(ms))
 
 
