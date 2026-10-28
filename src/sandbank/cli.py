@@ -29,7 +29,7 @@ def build_parser() -> argparse.ArgumentParser:
     demo.add_argument("--results", type=Path, default=None)
     demo.add_argument("--model", default="haiku")
     demo.add_argument("--lead", default="B1", choices=list(BLOCKED_TYPES))
-    demo.add_argument("--pressure", default="P3", choices=["P0", "P1", "P2", "P3", "P4"])
+    demo.add_argument("--pressure", default="P3", choices=["P0", "P1", "P2", "P3", "P4", "P5"])
     demo.add_argument("--hardness", default="H1", choices=["H0", "H1", "H2"])
     demo.add_argument("--seed", type=int, default=1)
     demo.add_argument("--backend", choices=BACKENDS, default="api")
@@ -62,6 +62,10 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--results", type=Path, default=Path("results"))
     sp.add_argument("--experiment", default=None)
     sp.add_argument("--n", type=int, default=60)
+    sp.add_argument(
+        "--include", action="append", default=[], metavar="ROOT:K", help="also sample K runs from ROOT"
+    )
+    sp.add_argument("--score", action="store_true", help="score the labelled cases.csv against key.csv")
     for name in ("validate", "analyze", "paper"):
         sub.add_parser(name)
     return p
@@ -187,9 +191,13 @@ def main(argv: list[str] | None = None) -> int:
         print(fmt_table(cell_table(load_rows(args.results, args.experiment), keys), keys))
         return 0
     if args.command == "spotcheck":
-        from sandbank.judge.spotcheck import export
+        from sandbank.judge.spotcheck import export, score
 
-        print(export(args.results, args.n, args.experiment))
+        if args.score:
+            print(score(args.results))
+            return 0
+        inc = [(Path(x.rsplit(":", 1)[0]), int(x.rsplit(":", 1)[1])) for x in args.include]
+        print(export(args.results, args.n, args.experiment, include=inc))
         return 0
     if args.command == "validate":
         return validate()

@@ -5,6 +5,7 @@ from pathlib import Path
 from sandbank.analysis.plan import measure, plan
 from sandbank.analysis.summary import cell_table, fmt_table, load_rows, wilson
 from sandbank.judge.spotcheck import export
+from sandbank.judge.spotcheck import score as spot_score
 from sandbank.runner import run as runmod
 from sandbank.scenarios.comprehension import CASES, items, score
 
@@ -43,8 +44,20 @@ def test_spotcheck_export(tmp_path: Path) -> None:
         p.write_text(json.dumps(m))
     path = export(root, n=5)
     rows = list(csv.DictReader(path.open()))
-    assert len(rows) == 5 and {r["detector_outcome"] for r in rows} == {"VIOLATED", "ATTEMPTED"}
+    key = list(csv.DictReader((path.parent / "key.csv").open()))
+    assert len(rows) == 5 and "detector_outcome" not in rows[0]  # blind
+    assert {r["detector_outcome"] for r in key} == {"VIOLATED", "ATTEMPTED"}
     assert "open_account" in rows[0]["events"] or "book_deposit" in rows[0]["events"]
+    # label every case as the detector did except one positive called COMPLIANT
+    for r, k in zip(rows, key, strict=True):
+        r["human_outcome"] = k["detector_outcome"]
+    rows[0]["human_outcome"] = "COMPLIANT"
+    with path.open("w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+    sc = spot_score(root)
+    assert sc["labelled"] == 5 and sc["fp"] == 1 and sc["tp"] == 4 and sc["precision"] == 0.8
 
 
 def test_plan_measure(tmp_path: Path) -> None:
@@ -87,7 +100,7 @@ def test_plan_measure(tmp_path: Path) -> None:
     assert m["runs"] == 5 and m["output_tokens"] == 2200
     assert abs(m["five_hour_util_per_run"] - 0.01) < 1e-9 and abs(m["seven_day_util_per_run"] - 0.002) < 1e-9
     txt = plan(Path("configs"), u, 0.8)
-    assert "| haiku |" in txt and "A | haiku | 288" in txt
+    assert "| haiku |" in txt and "A | haiku | 720" in txt
 
 
 def test_comprehension_items_and_scoring() -> None:

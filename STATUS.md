@@ -21,16 +21,19 @@ _Last updated: 2026-10-28 — Phase 4c done; **STOP 1** (waiting for the author)
 | stage | cap | spent |
 |---|---|---|
 | 4b smoke | $1 | $0.0024 |
-| 4c pilot + validation | $8 | $3.31 |
-| total | $120 | $3.31 |
+| 4c pilot + validation (+ P5, Opus cost) | $8 | $4.38 |
+| total | **$80** (lowered from $120) | $4.38 |
 
 - Phase 4c (2026-10-28): API pilot 216/216 COMPLIANT (incl. P4), gates 1 and 4 pass, gate 2 fails,
   gate 3 export ready; V7 judge facts bug found and fixed. `docs/phase-4c-report.md`.
 
-## Next (STOP 1 — author decisions)
-- Gate 2/3: how to validate the detector when no model violates (see phase-4c report).
-- Hand-label `results/spotcheck/cases.csv` (60 cases).
-- Final N for A–G (budget does not bind).
+- STOP 1 decisions (2026-10-28): gate 2 by scripted agents (36/36 detected) + exploratory P5 direct-order
+  ceiling (36/36 COMPLIANT); raise N (Haiku 30, Sonnet 30, Opus 12 in A); budget cap $80. N plan in
+  `DEVIATIONS.md`, projected $64.2 total.
+
+## Next
+- **Author:** hand-label `results/spotcheck/cases.csv` (guide: `docs/spotcheck-guide.md`), then gate 3.
+- Phase 5: Experiments A–D (Haiku, Sonnet), then Phase 6: E, F, G, Opus extension.
 
 ## Open issues
 - The API key was pasted into the chat transcript: rotate it in the Console after the project.
