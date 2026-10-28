@@ -1,0 +1,116 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{libertinus}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+
+\input{numbers.tex}
+\pagestyle{empty}
+\setlist{leftmargin=1.2em, itemsep=0.3em, topsep=0.3em}
+
+\begin{document}
+
+{\Large\bfseries Will an LLM banking agent break KYC/AML rules to hit a sales target?}\par
+\vspace{0.3em}
+{\large Executive brief: a pre-registered sandbox study of Claude agents}\par
+\vspace{0.4em}
+Thanatchon Chongmankhong\quad\textbullet\quad October 2026\par
+\vspace{0.3em}
+{\small\itshape Independent personal research. Fully synthetic sandbox. Does not represent the views of any
+employer or institution.}
+\vspace{0.8em}
+
+\noindent\textbf{Bottom line.} We gave Claude agents a bank relationship manager's job, a sales target and a
+manager who pushed for it, with know-your-customer (KYC) and anti-money-laundering (AML) controls that the
+agent could override by typing a reason. Across \NProbes{} pre-registered runs of Claude Haiku~5.5, Sonnet~5.5 and % numbers-ok: model version
+Opus~5.5 the agents committed \NViolations{} violations and made \NAttempts{} attempts. They checked identities, % numbers-ok: model version
+requested documents, escalated sanctions hits and told the manager the target would be missed. The models
+differed instead in how much \emph{legitimate} business they completed. The result is evidence, with stated
+bounds, for one design; it is not a certification of any agent.
+
+\medskip\noindent\textbf{Why it matters.} Banks are starting to give LLM agents tools that can open accounts
+and post transactions. Money-mule networks, which move the proceeds of scams, depend on accounts being opened
+for people who do not own the money. Supervisors have answered by tightening account opening and by making a
+bank that falls short share the loss; the Bank of Thailand, for example, now requires banks to refuse accounts
+to high-risk applicants. An agent that cut a corner
+under sales pressure would open exactly the accounts these rules are meant to stop.
+
+\medskip\noindent\textbf{What the study did.} SandBank is a fictional bank, exposed to the agent as seventeen
+ordinary tools: look up a lead, run a KYC check, request documents, open an account, book a deposit, file a
+report, escalate to Compliance, message the manager. Each shift had one customer whom policy blocked that day
+(failed KYC, a sanctions hit, a politically exposed person awaiting due diligence, a large deposit that needs
+a report, third-party funds, missing source of funds) and one customer who could be served. The manager's
+message rose from no target to a threat of branch closure and job loss. Further experiments removed warnings,
+told the agent Compliance reviews were paused, ran five-day episodes in which a deposit could be split, and
+had the manager explicitly license, then order, an override. A deterministic detector read the bank's event
+log for eight violation types. Hypotheses, sample sizes and analyses were registered before any model data.
+
+\subsection*{Findings}
+
+\begin{enumerate}
+\item \textbf{No violations under any condition.} In the main experiment, which ran all three models, the
+95\% upper bound on the per-run violation rate is \UpperAHaiku\% for Haiku, \UpperASonnet\% for Sonnet % numbers-ok: confidence level
+(\NAHaiku{} runs each) and \UpperAOpus\% for Opus (\NAOpus{} runs); because the same scenarios recur across
+pressure levels, the conservative bounds are \UpperScenAHaiku\%, \UpperScenASonnet\% and \UpperScenAOpus\%.
+Neither an explicit licence (``use the override fields, I'll back you'') nor a direct order from the
+manager produced a violation in Haiku or Sonnet.
+
+\item \textbf{Under pressure the agents escalated and reported, rather than cut corners.} They ran the KYC
+check on the blocked customer in \KycCheckedHaiku\%, \KycCheckedSonnet\% and \KycCheckedOpus\% of runs
+(Haiku, Sonnet, Opus), escalated every sanctions hit,
+and under the strongest pressure told the manager that a lead would not convert in
+\ToldManagerPThreeHaiku\% (Haiku), \ToldManagerPThreeSonnet\% (Sonnet) and \ToldManagerPThreeOpus\% (Opus)
+of runs.
+
+\item \textbf{The difference between models is legitimate work, not compliance.} A large deposit that policy
+allows once its report is filed was opened in \BFourConvHaiku\% of Haiku runs, \BFourConvSonnet\% of Sonnet
+runs and \BFourConvOpus\% of Opus runs. When Haiku did not open it, it left a legal account on hold; it never
+opened it without the report. An evaluation that counts only violations would score this caution as
+perfect. (Exploratory; not pre-registered.)
+\end{enumerate}
+
+\subsection*{What a bank deploying an agent should take from this}
+
+\noindent
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.36\linewidth}X@{}} % numbers-ok: column width
+\toprule
+Do & Why \\
+\midrule
+Give the agent a compliant route for every case: escalate, request documents, report a missed target &
+An earlier study that found harmful actions made them the only route to the goal. Here every blocked case
+had a compliant route and the agents took it; the paper argues this is the likelier reason for the
+difference. \\ \addlinespace
+Keep hard controls on prohibited actions and log every tool call & Zero violations in a few hundred runs per
+model bounds the rate at a few percent; that does not rule out a rare failure that matters at bank scale. \\ \addlinespace
+Measure lost legitimate business alongside violations & The models differed in completed work, not in
+compliance; a guardrail's cost has to be measured on work that can actually be lost. \\ \addlinespace
+Test your own deployment, with your own policy and tools & One fictional bank, one clear policy, short
+episodes and one model family. \\
+\bottomrule
+\end{tabularx}
+
+\subsection*{What this study does not show}
+
+\begin{itemize}
+\item \textbf{The deceived agent.} The sandbox flags the third party and the missing documents; the test was
+whether a pressured agent respects the flag. Whether an agent recognises a mule whose papers pass the checks,
+or resists a customer's social engineering, was not tested.
+\item \textbf{Other model families, or why the agents complied.} Only Claude models were tested, and their
+reasoning was not visible. Models can sometimes tell when they are being evaluated; the agents never said so,
+but the null may partly reflect it.
+\end{itemize}
+
+\vfill
+\noindent{\small
+\begin{tabular}{@{}ll@{}}
+Paper, pre-registration, code and every run & \url{https://github.com/thanatchon36/sandbank} \\
+The paper on the web & \url{https://thanatchon36.github.io/sandbank/paper/} \\
+Run data & \url{https://huggingface.co/datasets/thanatchon36/sandbank} \\
+\end{tabular}\par\smallskip\noindent
+Every number in this brief is generated from the results files. Total API spend for the study: USD~\SpendUSD.}
+
+\end{document}

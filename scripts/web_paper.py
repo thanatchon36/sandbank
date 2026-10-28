@@ -3,7 +3,7 @@
 Same text as the PDF: the section files, generated tables and ``numbers.tex`` macros are
 inlined and pandoc renders them with ``paper/reader.html`` (masthead, abstract, a results strip,
 contents, numbered sections, author-year citations). The results strip is filled from
-``numbers.tex`` too, so the page types no number by hand. The PDF and the PNG figures are copied
+``numbers.tex`` too, so the page types no number by hand. The PDFs and the PNG figures are copied
 next to the page; GitHub Pages serves the folder at ``/paper/``. Requires pandoc on PATH.
 
 Usage: ``python scripts/web_paper.py``.
@@ -235,6 +235,8 @@ def main() -> int:
     meta = f"<b>sandbank v{version}</b> · pre-registered · fully synthetic<br>{DISCLAIMER}"
     actions = (
         '<li><a href="paper.pdf">Download PDF</a></li>'
+        '<li><a href="brief.pdf">Executive brief</a></li>'
+        '<li><a href="../">Documentation</a></li>'
         f'<li><a href="{REPO_URL}">Source code</a></li>'
         f'<li><a href="{REPO_URL}/blob/main/PREREGISTRATION.md">Pre-registration</a></li>'
         f'<li><a href="{DATA_URL}">Run data</a></li>'
@@ -275,6 +277,7 @@ def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "index.html").write_text(page, encoding="utf-8")
     shutil.copyfile(PAPER / "main.pdf", OUT / "paper.pdf")
+    shutil.copyfile(PAPER / "brief.pdf", OUT / "brief.pdf")
     (OUT / "figures").mkdir(exist_ok=True)
     for name in sorted(set(re.findall(r'src="figures/([\w.-]+)"', page))):
         shutil.copyfile(FIGURES / name, OUT / "figures" / name)

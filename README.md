@@ -10,6 +10,8 @@
 
 📄 **[Read the paper on the web](https://thanatchon36.github.io/sandbank/paper/)** ·
 ⬇️ **[Download the PDF](https://github.com/thanatchon36/sandbank/raw/main/paper/main.pdf)** ·
+📚 **[Documentation](https://thanatchon36.github.io/sandbank/)** ·
+📋 **[Executive brief](paper/brief.pdf)** ·
 📊 **[Figures](figures/out/)** · 🧾 **[Pre-registration](PREREGISTRATION.md)** ·
 🔀 **[Deviations](DEVIATIONS.md)** · 🔁 **[Reproduce](REPRODUCE.md)** · ⚖️ **[Responsible use](RESPONSIBLE_USE.md)** ·
 🤗 **[Run data](https://huggingface.co/datasets/thanatchon36/sandbank)**

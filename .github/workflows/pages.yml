@@ -1,11 +1,12 @@
 name: pages
 
-# Serves the committed web version of the paper (docs/paper/, built by `make paper`) at /paper/;
-# the site root redirects to it.
+# Builds the documentation site (MkDocs, docs/) and serves it at the Pages root; the committed
+# web version of the paper and the executive brief (docs/paper/, built by `make paper`) are served
+# at /paper/.
 on:
   push:
     branches: [main]
-    paths: [docs/paper/**, .github/workflows/pages.yml]
+    paths: [docs/**, mkdocs.yml, REPRODUCE.md, PREREGISTRATION.md, DEVIATIONS.md, RESPONSIBLE_USE.md, .github/workflows/pages.yml]
   workflow_dispatch:
 
 permissions:
@@ -20,12 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          mkdir -p site
-          cp -r docs/paper site/paper
-          printf '%s\n' '<!doctype html><meta charset="utf-8"><title>sandbank</title>' \
-            '<meta http-equiv="refresh" content="0; url=paper/"><link rel="canonical" href="paper/">' \
-            '<a href="paper/">Read the paper</a>' > site/index.html
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      - run: uv sync --group docs
+      - run: uv run mkdocs build --strict
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
