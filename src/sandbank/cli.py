@@ -67,7 +67,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sp.add_argument("--score", action="store_true", help="score the labelled cases.csv against key.csv")
     sp.add_argument("--llm", nargs="+", metavar="MODEL", help="blind LLM labels for cases.csv, then score")
-    for name in ("validate", "analyze", "paper"):
+    an = sub.add_parser("analyze", help="numbers, tables and figures from cached results")
+    an.add_argument("--results", type=Path, default=Path("results"))
+    an.add_argument("--paper", type=Path, default=Path("paper"))
+    an.add_argument("--figures", type=Path, default=Path("figures/out"))
+    for name in ("validate", "paper"):
         sub.add_parser(name)
     return p
 
@@ -259,8 +263,8 @@ def main(argv: list[str] | None = None) -> int:
         from sandbank.analysis.figures import make_all
         from sandbank.analysis.report import analyze
 
-        print(analyze(Path("results"), Path("paper")))
-        print(make_all(Path("results/aggregated"), Path("figures/out")))
+        print(analyze(args.results, args.paper))
+        print(make_all(args.results / "aggregated", args.figures))
         return 0
     print(f"sandbank {args.command}: not implemented yet", file=sys.stderr)
     return 1
