@@ -13,7 +13,8 @@ make paper       # + number check + PDF (needs tectonic on PATH)
 Every number in the paper comes from `paper/numbers.tex` and `paper/generated/`, which `sandbank analyze`
 writes from `results/raw/*/result.json` and `events.jsonl`. `scripts/check_numbers.py` fails if the prose
 types a number by hand. Full agent transcripts (`transcript.json`, about 55 MB) are not in git; they are in
-the release archive.
+the release archive and, with every other run file, in the
+[Hugging Face dataset](https://huggingface.co/datasets/thanatchon36/sandbank) (`transcripts` config).
 
 ## 2. Check the instrument without a model (no key, $0)
 

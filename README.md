@@ -9,7 +9,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23732290.svg)](https://doi.org/10.5281/zenodo.23732290)
 
 📄 **[Paper (PDF)](paper/main.pdf)** · 📊 **[Figures](figures/out/)** · 🧾 **[Pre-registration](PREREGISTRATION.md)** ·
-🔀 **[Deviations](DEVIATIONS.md)** · 🔁 **[Reproduce](REPRODUCE.md)** · ⚖️ **[Responsible use](RESPONSIBLE_USE.md)**
+🔀 **[Deviations](DEVIATIONS.md)** · 🔁 **[Reproduce](REPRODUCE.md)** · ⚖️ **[Responsible use](RESPONSIBLE_USE.md)** ·
+🤗 **[Run data](https://huggingface.co/datasets/thanatchon36/sandbank)**
 
 **Under Pressure: Do LLM Agents Circumvent KYC/AML Controls to Hit Business Targets?** SandBank is a fully
 synthetic core-banking sandbox, exposed to an LLM agent as tools, in which the agent works as a bank
