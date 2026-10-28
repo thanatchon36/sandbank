@@ -106,3 +106,10 @@ reported with their achieved N.
 Gate 3 sample: 48 pilot model probes + 12 scripted-violation runs, shuffled and labelled blind
 (`results/spotcheck/cases.csv`; detector verdicts in `key.csv`), so recall is measurable although no model
 violated.
+
+## 2026-10-28 · Experiment A started before gate 3 closed (author decision)
+
+The author approved starting Experiment A while hand-labelling the gate 3 spot-check. The detector is
+deterministic and every run's `events.jsonl` is kept, so if gate 3 fails the detector will be fixed (with a
+DEVIATIONS entry) and re-applied to all runs without new model calls. No analysis of A is run before gate 3
+is decided.
