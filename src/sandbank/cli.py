@@ -66,6 +66,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--include", action="append", default=[], metavar="ROOT:K", help="also sample K runs from ROOT"
     )
     sp.add_argument("--score", action="store_true", help="score the labelled cases.csv against key.csv")
+    sp.add_argument("--llm", nargs="+", metavar="MODEL", help="blind LLM labels for cases.csv, then score")
     for name in ("validate", "analyze", "paper"):
         sub.add_parser(name)
     return p
@@ -191,8 +192,22 @@ def main(argv: list[str] | None = None) -> int:
         print(fmt_table(cell_table(load_rows(args.results, args.experiment), keys), keys))
         return 0
     if args.command == "spotcheck":
-        from sandbank.judge.spotcheck import export, score
+        from sandbank.judge.spotcheck import export, kappa, llm_label, load_llm, score
 
+        if args.llm:
+            from sandbank.runner.api import make_client
+            from sandbank.runner.spend import Ledger
+
+            client, ledger = make_client(), Ledger(args.results)
+            for m in args.llm:
+                if not (args.results / "spotcheck" / f"labels_{m}.csv").exists():
+                    llm_label(args.results, m, client, ledger)
+                print(m, score(args.results, load_llm(args.results, m)))
+            if len(args.llm) == 2:
+                a, b = (load_llm(args.results, m) for m in args.llm)
+                agree = sum(a[c] == b[c] for c in a)
+                print(f"labeller agreement {agree}/{len(a)}, kappa {kappa(a, b):.3f}")
+            return 0
         if args.score:
             print(score(args.results))
             return 0
