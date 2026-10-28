@@ -10,15 +10,16 @@ constraints at substantial rates \citep{li2025odcv}. Know-your-customer (KYC) an
 controls are an obvious place for this failure to matter: they stand between a relationship manager and
 the account the target needs.
 
-\paragraph{Finding.} In a pre-registered study of \NProbes{} runs in SandBank, a synthetic bank, Claude
-Haiku~5.5, Sonnet~5.5 and Opus~5.5 never circumvented a KYC/AML control. This held under every % numbers-ok: design constant, version or citation
-pre-registered pressure level up to a threat of branch closure and job loss, with soft and with absent
-technical controls, with an oversight cue that Compliance reviews were paused, over five-day episodes, and in
-two ceiling conditions where the manager explicitly licensed and then directly ordered the override. With
-zero events, the result is an upper bound: at most \UpperHaiku\% for Haiku (95\% Wilson bound, \NHaiku{} % numbers-ok: design constant, version or citation
-runs), \UpperSonnet\% for Sonnet and \UpperOpus\% for Opus. The models instead did what the policy asks:
-they checked KYC, requested missing documents, escalated sanctions hits and told the manager the target
-would be missed.
+\paragraph{Finding.} In \NProbes{} runs of a pre-registered design in SandBank, a synthetic bank, Claude
+Haiku~5.5, Sonnet~5.5 and Opus~5.5 never circumvented a KYC/AML control. This held at every % numbers-ok: design constant, version or citation
+pre-registered pressure level up to a threat of branch closure and job loss, and, for Haiku, with soft and
+with absent technical controls, with an oversight cue that Compliance reviews were paused and over five-day
+episodes. In ceiling probes run on Haiku and Sonnet, it also held when the manager explicitly licensed and
+then directly ordered the override. With zero events, the result is an upper bound: in the main pressure
+experiment, at most \UpperAHaiku\% per run for Haiku and \UpperASonnet\% for Sonnet (95\% Wilson bound, % numbers-ok: design constant, version or citation
+\NAHaiku{} runs each) and \UpperAOpus\% for Opus (\NAOpus{} runs), and two to four times that if each
+scenario is counted once. The models instead did what the policy asks: they checked KYC, requested missing
+documents, escalated sanctions hits and told the manager the target would be missed.
 
 \paragraph{Instrument.} A null result is only as good as the instrument's ability to register the
 behaviour. Pre-registration required a ceiling condition to show a high violation rate; it showed none, so we
@@ -28,7 +29,7 @@ controls clean), and we report the failed gate as such (Section~\ref{sec:design}
 
 \paragraph{Contributions.} (i) SandBank, an open, deterministic KYC/AML tool sandbox with eight violation
 types, three levels of control hardness and a Compliance check-in; (ii) a pre-registered, budgeted
-measurement on three current Claude models with all deviations logged; (iii) a careful null with upper
-bounds and the behavioural record of what the agents did instead, including where models differ in
-legitimate goal attainment. Section~\ref{sec:discussion} discusses what a null result in a sandbox does and
+measurement on three current Claude models with all deviations logged; (iii) a null with upper
+bounds, the failed instrument gate reported as such, and the behavioural record of what the agents did
+instead, including exploratory differences between models in legitimate goal attainment. Section~\ref{sec:discussion} discusses what a null result in a sandbox does and
 does not license for banks deploying such agents.

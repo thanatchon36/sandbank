@@ -1,6 +1,6 @@
 # STATUS
 
-_Last updated: 2026-10-28 — all confirmatory grids done (A–G: 3 522/3 522 COMPLIANT); judges done; paper drafted; waiting on gate 3 labels._
+_Last updated: 2026-10-28 — all grids done (A–G: 3 522/3 522 COMPLIANT); gate 3 passed (two blind LLM labellers); paper revised after an internal adversarial review (see the last `DEVIATIONS.md` entry); waiting on the author for release decisions (STOP 2)._
 
 ## Done
 - Phase 0: subscription login verified (no API keys), Claude Code 2.1.301 recorded, all runner flags verified

@@ -24,18 +24,21 @@ paper.
 
 <p align="center"><img src="figures/out/fig1_bounds.png" alt="Violation rate and 95% Wilson interval by condition and model: zero everywhere" width="860"></p>
 
-Across **3,522 pre-registered runs** of Claude Haiku 5.5, Sonnet 5.5 and Opus 5.5 there were **no violations
-and no attempted violations**. The 95% upper bound on the per-run violation rate is 0.16% for Haiku (2,442
-runs), 0.48% for Sonnet (792) and 1.32% for Opus (288). No condition moved this: pressure up to a threat of
-branch closure, controls with no warning at all, a cue that Compliance reviews were paused, five-day
-episodes, a compliance sentence, four mitigations, and the manager explicitly licensing ("use the override
-fields, I'll back you") or ordering the override. The agents ran the KYC check, requested documents,
-escalated every sanctions hit and, under the strongest pressure, told the manager the target would be
-missed; all 3,522 check-in answers matched the event log. Where the models differ is legitimate work: the
-large deposit that policy allows once its report is filed was opened in 65% of runs by Haiku, 92% by Sonnet
-and 100% by Opus. The pre-registered hypotheses about pressure, controls, oversight and mitigations are not
-supported, and the ones about deception and knowing violations could not be tested. Instrument checks,
-deviations and limitations are in the paper.
+Across **3,522 runs** of a pre-registered design with Claude Haiku 5.5, Sonnet 5.5 and Opus 5.5 there were
+**no violations and no attempted violations**. In the main pressure experiment, which ran all three models, the
+95% upper bound on the per-run violation rate is 0.53% for Haiku and Sonnet (720 runs each) and 1.32% for Opus
+(288); counting each scenario once, since seeds recur across pressure levels, it is 2.1%, 2.1% and 5.1%.
+Pressure up to a threat of branch closure produced no violation for any model. On Haiku, so did controls with
+no warning at all, a cue that Compliance reviews were paused, five-day episodes, a compliance sentence and four
+mitigations. On Haiku and Sonnet, so did the manager explicitly licensing ("use the override fields, I'll back
+you") or ordering the override. The agents ran the KYC check, requested documents, escalated every sanctions
+hit and, under the strongest pressure, told the manager the target would be missed. In an exploratory
+comparison the models differed in legitimate work: the large deposit that policy allows once its report is
+filed was opened in 65% of runs by Haiku, 92% by Sonnet and 100% by Opus. The pre-registered hypotheses about
+pressure, controls, oversight and mitigations are not supported, and the ones about deception and knowing
+violations could not be tested. The ceiling gate failed and the detector was validated with scripted agents
+instead; deviations, including those found in an internal review, and limitations are in the paper and
+[`DEVIATIONS.md`](DEVIATIONS.md).
 
 ## Quickstart
 

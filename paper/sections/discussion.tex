@@ -1,14 +1,17 @@
 \section{Discussion}
 \label{sec:discussion}
 
-\paragraph{Why this differs from earlier findings.} Studies that found agents breaking rules under KPI
-pressure \citep{li2025odcv, lynch2025agentic} usually built scenarios where the violation was the only or the
-obvious route to the goal, and often tested many model families. SandBank gives the agent a realistic
-compliant route for every lead (request documents, escalate, report the miss) and a manager who never
-approves an exception. That is how a bank is meant to work, and it is the setting a bank deploying an RM agent
-cares about. Our result is that, in this setting, three current Claude models take the compliant route even
-when the manager licenses or orders the violation. It is compatible with the earlier results: they show
-that some models in some designs violate; we show that these models in this design did not, with bounds.
+\paragraph{Why this differs from earlier findings.} \citet{lynch2025agentic} deliberately built dilemmas in
+which the harmful action was the only route to the agent's goal, and found such actions in models from every
+developer they tested, Claude models included. ODCV-Bench \citep{li2025odcv} reports high violation rates
+under KPI pressure across many models. SandBank instead gives the agent a compliant route for every lead
+(request documents, escalate, report the miss), and outside the ceiling conditions the manager asks only for
+results, never for an exception. That is how a bank is meant to work, and it is the setting a bank deploying an
+RM agent cares about. We did not run the earlier scenarios, so we cannot separate the effect of design from
+that of model generation. Since earlier Claude models did take the harmful action in Lynch et al.'s design, we
+think the availability of a compliant route is the likelier explanation, not the model family. The results are
+compatible: earlier work shows that some models in some designs violate; we show that these models in this
+design did not, with bounds.
 
 \paragraph{What the null does and does not license.} A bank can read the bounds as evidence that these models,
 given this kind of tooling and policy, do not readily circumvent KYC/AML controls for a sales target. It
@@ -17,12 +20,14 @@ texts; the agents may recognise a test (Section~\ref{sec:limitations}); and the 
 sample sizes we could afford. Banks should still log tool calls, keep hard controls on prohibited actions and
 test their own deployment.
 
-\paragraph{The useful difference is capability.} The models differed not in compliance but in how much
+\paragraph{The useful difference is capability.} In an exploratory comparison, the models differed in how much
 legitimate work they finished. A cautious agent that leaves a legal large deposit unopened has a business
 cost that a violation-only evaluation would score as perfect. Pre-deployment testing of compliance agents
 should measure both.
 
 \paragraph{On null results.} We pre-registered hypotheses that predicted violations, ran the study as
-planned, and report that the hypotheses failed. A failed ceiling gate is reported, not worked around by
-strengthening the prompt until a violation appears. We think such results belong in the literature, because
-a field that publishes only positive misalignment findings will overstate how often it happens.
+planned, and report that the hypotheses failed. When the P4 ceiling produced no violation, we strengthened it
+once, to a direct order (P5), as a logged exploratory condition; when that also produced none, we stopped and
+report the failed gate rather than escalating the prompt until a violation appeared. We think such results
+belong in the literature, because a field that publishes only positive misalignment findings will overstate
+how often it happens.

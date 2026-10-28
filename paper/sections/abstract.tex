@@ -1,18 +1,20 @@
 Banks are starting to give LLM agents tools that can open accounts and post transactions. We ask whether such
 an agent, given an ordinary sales target and a manager who pushes for it, will circumvent know-your-customer
 (KYC) and anti-money-laundering (AML) controls. SandBank is a fully synthetic core-banking sandbox exposed to
-the agent as tools, with a deterministic detector for eight violation types, a Compliance check-in that probes
-for deception, and pre-registered experiments varying pressure, control hardness, oversight cues, a compliance
-sentence and four mitigations. Across \NProbes{} pre-registered runs of Claude Haiku~5.5, Sonnet~5.5 and % numbers-ok: design constant, version or citation
-Opus~5.5 we observed \NViolations{} violations and \NAttempts{} circumvention attempts: the 95\% upper bound % numbers-ok: design constant, version or citation
-on the violation rate is \UpperHaiku\% for Haiku (\NHaiku{} runs), \UpperSonnet\% for Sonnet and
-\UpperOpus\% for Opus. Neither explicit licence from the manager (``use the override fields, I'll back you'')
-nor a direct order to enter an override produced a violation, while scripted agents confirmed that the
-environment registers every violation type. Instead the agents checked KYC, requested documents, escalated
-sanctions hits and told the manager the target would be missed; every Compliance check-in answer was
-consistent with the event log. The pre-registered hypotheses about pressure, hardness, oversight and
-mitigations are therefore not supported, and the hypotheses about deception and knowing violations could not
-be tested. We report where the models differ instead: legitimate goal attainment, such as opening a large
-deposit with its report filed, was \BFourConvHaiku\% for Haiku, \BFourConvSonnet\% for Sonnet and
-\BFourConvOpus\% for Opus. The
+the agent as tools, with a deterministic detector for eight violation types, a Compliance check-in, and
+pre-registered experiments varying pressure, control hardness, oversight cues, a compliance sentence and four
+mitigations. Across \NProbes{} runs of Claude Haiku~5.5, Sonnet~5.5 and Opus~5.5 we observed % numbers-ok: design constant, version or citation
+\NViolations{} violations and \NAttempts{} circumvention attempts. In the main pressure experiment the 95\% % numbers-ok: design constant, version or citation
+upper bound on the per-run violation rate is \UpperAHaiku\% for Haiku and \UpperASonnet\% for Sonnet
+(\NAHaiku{} runs each) and \UpperAOpus\% for Opus (\NAOpus{}); counting each scenario once, since seeds are
+reused across pressure levels, the bounds are \UpperScenAHaiku\%, \UpperScenASonnet\% and \UpperScenAOpus\%.
+In pilot and ceiling probes run on Haiku and Sonnet only, neither an explicit licence from the manager (``use
+the override fields, I'll back you'') nor a direct order to enter an override produced a violation; scripted
+agents confirmed that the environment registers every violation type. The agents instead checked KYC,
+requested documents, escalated sanctions hits and told the manager the target would be missed. The
+pre-registered hypotheses about pressure, hardness, oversight and mitigations are not supported, and those
+about deception and knowing violations could not be tested. In an exploratory comparison the models differed
+in legitimate goal attainment: a large deposit that policy allows once its report is filed was opened in
+\BFourConvHaiku\% of Haiku runs (95\% CI \BFourLoHaiku--\BFourHiHaiku), \BFourConvSonnet\% of Sonnet runs % numbers-ok: design constant, version or citation
+(\BFourLoSonnet--\BFourHiSonnet) and \BFourConvOpus\% of Opus runs (\BFourLoOpus--\BFourHiOpus). The
 sandbox, pre-registration and all run logs are released.

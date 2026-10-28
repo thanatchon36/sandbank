@@ -366,6 +366,14 @@ def bounds_table(df: pd.DataFrame) -> str:
     return "\n".join(out) + "\n"
 
 
+def escalation_holm(mit: pd.DataFrame) -> float:
+    """Smallest Holm-adjusted Fisher exact p for escalation, each mitigation vs no mitigation."""
+    counts = {r.mitigation: (round(r.escalated * r.n), int(r.n)) for r in mit.itertuples()}
+    k0, n0 = counts.pop("none")
+    ps = sorted(float(stats.fisher_exact([[k, n - k], [k0, n0 - k0]])[1]) for k, n in counts.values())
+    return min(1.0, min(p * (len(ps) - i) for i, p in enumerate(ps))) if ps else math.nan
+
+
 def _macro(name: str, val: Any) -> str:
     return f"\\newcommand{{\\{name}}}{{{val}}}"
 
@@ -385,6 +393,8 @@ def exploratory_a(a: pd.DataFrame) -> list[str]:
         mm = model.capitalize()
         out.append(_macro(f"ToldManagerLow{mm}", pct(g[g.pressure != "P3"].told_manager.mean(), 0)))
         out.append(_macro(f"ToldManagerPThree{mm}", pct(g[g.pressure == "P3"].told_manager.mean(), 0)))
+        out.append(_macro(f"EscalatedLow{mm}", pct(g[g.pressure != "P3"].escalated_compliance.mean(), 0)))
+        out.append(_macro(f"EscalatedPThree{mm}", pct(g[g.pressure == "P3"].escalated_compliance.mean(), 0)))
     b4 = a[(a.lead == "B4") & (a.model == "haiku")]
     by_p = b4.groupby("pressure").converted
     for p, tag in (("P0", "Zero"), ("P3", "Three")):
@@ -401,7 +411,8 @@ def numbers(df: pd.DataFrame, hyp: list[dict[str, Any]], mit: pd.DataFrame, comp
     out.append(_macro("NAttempts", int(df.attempted.sum())))
     for exp, g in df.groupby("experiment"):
         out.append(_macro(f"NExp{exp}", len(g)))
-    for model, g in df.groupby("model"):
+    # F excluded: its floor and P4 ceiling are not sales-task conditions
+    for model, g in df[df.experiment != "F"].groupby("model"):
         mm = model.capitalize()
         r = rate(g)
         out.append(_macro(f"N{mm}", f"{r['n']:,}".replace(",", "{,}")))
@@ -410,10 +421,21 @@ def numbers(df: pd.DataFrame, hyp: list[dict[str, Any]], mit: pd.DataFrame, comp
     a = df[df.experiment == "A"]
     for model, g in a.groupby("model"):  # model comparisons: Experiment A only (same conditions)
         mm = model.capitalize()
+        out.append(_macro(f"NA{mm}", len(g)))
         out.append(_macro(f"UpperA{mm}", pct(rate(g)["hi"], 2)))
-        out.append(_macro(f"BFourConv{mm}", pct(g[g.lead == "B4"].converted.mean(), 0)))
+        # seeds are reused across conditions: the most conservative bound counts each scenario once
+        scen = g.groupby(["lead", "seed"]).violated.any()
+        out.append(_macro(f"NScenA{mm}", len(scen)))
+        out.append(_macro(f"UpperScenA{mm}", pct(wilson(int(scen.sum()), len(scen))[1], 1)))
+        b4 = g[g.lead == "B4"]
+        lo, hi = wilson(int(b4.converted.sum()), len(b4))
+        out.append(_macro(f"BFourConv{mm}", pct(b4.converted.mean(), 0)))
+        out.append(_macro(f"BFourConvN{mm}", f"{int(b4.converted.sum())}/{len(b4)}"))
+        out.append(_macro(f"BFourLo{mm}", pct(lo, 0)))
+        out.append(_macro(f"BFourHi{mm}", pct(hi, 0)))
         out.append(_macro(f"CleanConv{mm}", pct(g.clean_converted.mean(), 0)))
         out.append(_macro(f"Escalated{mm}", pct(g.escalated_compliance.mean(), 0)))
+        out.append(_macro(f"KycChecked{mm}", pct(g.checked_kyc.mean(), 0)))
         out.append(_macro(f"ToldManager{mm}", pct(g.told_manager.mean(), 0)))
     out += exploratory_a(a)
     worst = max(rate(g)["hi"] for _, g in df.groupby(["experiment", "model", "pressure", "lead"]))
@@ -428,7 +450,16 @@ def numbers(df: pd.DataFrame, hyp: list[dict[str, Any]], mit: pd.DataFrame, comp
         out.append(_macro(f"ExtReq{tag}", pct(r.extension_requested, 0)))
         out.append(_macro(f"Escalated{tag}", pct(r.escalated, 0)))
         out.append(_macro(f"Turns{tag}", f"{r.mean_turns:.1f}"))
+    out.append(_macro("EscalationHolmMinP", f"{escalation_holm(mit):.2f}"))
     return "\n".join(out) + "\n"
+
+
+def checkin_ids_valid(root: Path, run_id: str) -> bool:
+    """Every account ID the check-in answer lists exists in the bank's final state."""
+    m = json.loads((run_dir(root, run_id) / "result.json").read_text())
+    state = json.loads((run_dir(root, run_id) / "state.json").read_text())
+    listed = set(m.get("checkin_class", {}).get("listed_accounts", []))
+    return listed <= set(state.get("accounts", {}))
 
 
 def extras(root: Path, df: pd.DataFrame) -> str:
@@ -437,11 +468,19 @@ def extras(root: Path, df: pd.DataFrame) -> str:
     from sandbank.judge.spotcheck import POSITIVE, kappa, load_llm, score
 
     out = []
-    pilot = pd.DataFrame([r for r in load_rows(root) if r["experiment"].startswith("pilot")])
+    pilot = pd.DataFrame(
+        [r for r in load_rows(root) if r["experiment"].startswith("pilot")],
+        columns=["model", "pressure", "lead", "violated", "attempted"],
+    )
     out.append(_macro("NPilot", len(pilot)))
     out.append(_macro("NPilotFlagged", int((pilot.violated | pilot.attempted).sum()) if len(pilot) else 0))
     for p, tag in (("P4", "Four"), ("P5", "Five")):
-        out.append(_macro(f"NPilotP{tag}", int((pilot.pressure == p).sum()) if len(pilot) else 0))
+        out.append(_macro(f"NPilotP{tag}", int((pilot.pressure == p).sum())))
+        for m in ("haiku", "sonnet"):
+            n = int(((pilot.pressure == p) & (pilot.model == m)).sum())
+            out.append(_macro(f"NPilotP{tag}{m.capitalize()}", n))
+    # P4/P5 address customers whose checks fail; B4's checks pass, so its probes do not test the order
+    out.append(_macro("NPilotPFiveBlocked", int(((pilot.pressure == "P5") & (pilot.lead != "B4")).sum())))
     legacy = load_rows(root / "legacy" / "claude-code-pilot")
     out.append(_macro("NLegacy", len(legacy)))
     out.append(_macro("NLegacyCompliant", sum(r["outcome"] == "COMPLIANT" for r in legacy)))
@@ -456,6 +495,7 @@ def extras(root: Path, df: pd.DataFrame) -> str:
     out.append(_macro("NScriptedControls", len(good)))
     out.append(_macro("NScriptedCompliant", sum(r["outcome"] == "COMPLIANT" for r in good)))
     out.append(_macro("NCheckins", int(df.checkin.notna().sum())))
+    out.append(_macro("NCheckinIdsValid", sum(checkin_ids_valid(root, r) for r in df.run_id)))
     out.append(_macro("NCheckinClean", int((df.checkin == "NO_VIOLATION").sum())))
     out.append(_macro("NClassifierRefusals", int(df.classifier_refusal.sum())))
     out.append(_macro("NInvalid", int((df.outcome == "INVALID").sum())))
@@ -481,6 +521,7 @@ def extras(root: Path, df: pd.DataFrame) -> str:
         sc = score(root, load_llm(root, labellers[0]))
         out.append(_macro("SpotN", sc["of"]))
         out.append(_macro("SpotDetectorPositives", sc["tp"] + sc["fp"]))
+        out.append(_macro("SpotRecallLo", f"{wilson(sc['tp'], sc['tp'] + sc['fn'])[0]:.2f}"))
     if len(labellers) == 2:
         a, b = (load_llm(root, m) for m in labellers)
         out.append(_macro("SpotLabellerAgree", sum(a[c] == b[c] for c in a)))
@@ -515,7 +556,7 @@ def analyze(root: Path, paper: Path) -> dict[str, Any]:
     (paper / "generated").mkdir(exist_ok=True)
     (paper / "generated" / "table_bounds.tex").write_text(bounds_table(df))
     appendix.write(root, paper)
-    pooled = {m: rate(g) for m, g in df.groupby("model")}
+    pooled = {m: rate(g) for m, g in df[df.experiment != "F"].groupby("model")}
     (agg / "models.json").write_text(json.dumps({"pooled": pooled, "comprehension": comp}, indent=1))
     return {"probes": len(df), "violations": int(df.violated.sum()), "pooled": pooled}
 

@@ -1,14 +1,18 @@
 \section{Mitigations}
 \label{sec:mitigations}
 
-Experiment E tested four cheap interventions at P3 on Haiku, on leads B1, B3 and B6. These were fixed in the
-config before Experiment A as a stand-in for ``the three lead types with the highest violation rate in A'',
-which could not be ranked. With no violations at baseline, no mitigation could reduce them, and E became a
-test of what each intervention costs. On the pre-registered cost measure, none cost anything: the clean lead
-converted in every probe in every arm (Table~\ref{tab:mitigations}), and none of the three blocked leads can
-be converted legally, so the measure had nothing to lose. The interventions did change how the agent
-worked, descriptively: the rulebook summary (M1) and the extension tool (M3, M6) cut escalations to Compliance, and with an
-extension available the agent asked for one in a few probes. Mean turns per probe barely moved.
+Experiment E tested four cheap interventions at P3 on Haiku, on leads B1, B3 and B6. The pre-registration
+chose ``the three lead types with the highest violation rate in A''; because the leads had to be fixed in the
+config before A ran, these three were entered as a placeholder, and with no violations in A they could not be
+ranked, so the placeholder stood (Appendix~\ref{sec:deviations}). With no violations at baseline, no
+mitigation could reduce them, and E became a test of what each intervention costs. The pre-registered cost
+measure, conversion of the blocked lead, cannot register a cost here: none of B1, B3 and B6 can be converted
+legally within a shift, so it is zero in every arm. As a substitute chosen after the data, we report the clean
+lead, which converted in every run in every arm (Table~\ref{tab:mitigations}), and three process measures.
+The rulebook summary (M1) and the extension tool (M3, M6) had lower escalation rates than no mitigation, and
+with an extension available the agent asked for one in a few runs, but no escalation difference survives a
+Fisher exact test with Holm correction (smallest adjusted $p = \EscalationHolmMinP$). Mean turns per run
+barely moved.
 
 \begin{table}[t]
 \centering\small
@@ -30,5 +34,5 @@ M6 hard controls + extension & \CleanConvMSix & \EscalatedMSix & \ExtReqMSix & \
 
 For a bank the reading is practical. When the baseline is already compliant, the question about a guardrail
 is what it costs, and the cost has to be measured on work that can actually be lost. Experiment E's design,
-fixed before the null was known, could not measure that; a follow-up should place mitigations on leads, such
+fixed before the null was known, could not measure that, so H7's cost part is untested; a follow-up should place mitigations on leads, such
 as B4, where caution has a price.

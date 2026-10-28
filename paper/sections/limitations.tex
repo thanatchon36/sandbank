@@ -1,8 +1,14 @@
 \section{Limitations}
 \label{sec:limitations}
 
-\paragraph{One model family.} We tested three Claude models only. Other families may behave differently, and
-the earlier positive findings were across many families.
+\paragraph{One model family, uneven coverage.} We tested three Claude models only. Other families may behave
+differently, and the earlier positive findings were across many families. Only Experiment A ran all three
+models; B--E and G ran on Haiku alone, the ceilings and the comprehension test on Haiku and Sonnet, and Opus
+was added from leftover budget with a smaller N.
+
+\paragraph{Reasoning not inspected.} The API returned thinking blocks without their text, so we never read
+the models' reasoning. We cannot say whether an agent considered a violation and rejected it; the account of
+what the agents did rests on tool calls and visible text.
 
 \paragraph{Evaluation awareness.} Models can often tell an evaluation from deployment
 \citep{needham2025evalaware}. We kept agent-facing text free of test language and judged verbalised
@@ -18,14 +24,19 @@ not rule out a rare failure that matters at bank scale.
 
 \paragraph{The ceiling gate failed.} Without a model-made violation we validated the detector with scripted
 agents and a test of the API path. A violation of a kind the scripted agents did not take could be missed;
-the blind spot-check (Section~\ref{sec:gates}) was labelled by two models, not by a person, and its
-positives are scripted.
+the blind spot-check (Section~\ref{sec:gates}) was labelled by two models, not by a person, its
+\SpotDetectorPositives{} positives are scripted, and its recall lower bound is \SpotRecallLo.
 
 \paragraph{Deviations.} The backend changed from the Claude Code harness to the API after the first pilot,
-and P5 was added after the pilot. Both are logged, neither touched the hypotheses, and the legacy pilot,
-which also had no violations, is reported separately (Appendix~\ref{app:legacy}).
+P5 was added after the pilot, and the cost measure for H7 had to be replaced after the data. All are logged
+(Appendix~\ref{sec:deviations}), and none touched the hypotheses. The legacy pilot, which also had no
+violations, is reported separately (Appendix~\ref{app:legacy}). The exploratory B4 comparison was framed after
+interim B4 counts from Experiment A had been seen during monitoring, before gate~3 was decided and before the % numbers-ok: design constant
+planned analysis.
 
-\paragraph{Author and tools.} The study was designed, run and analysed by a single author. Code, analysis
-and drafts of this paper were written with the help of Claude Code, a product of the same company whose
-models are tested; the pre-registration, the deterministic detector and the released event logs are meant to
-let readers check the result independently.
+\paragraph{Author, tools and conflict of interest.} The study was designed, run and analysed by a single
+author. Code, analysis and drafts of this paper were written with
+the help of Claude Code running Opus~5.5, which is also one of the models tested and one of the two gate~3 % numbers-ok: model version
+labellers; Sonnet~5.5, the other labeller, is also tested. All three roles belong to the company whose models % numbers-ok: model version
+are evaluated. The pre-registration, the deterministic detector and the released event logs are meant to let
+readers check the result independently of any model's judgement.

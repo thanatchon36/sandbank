@@ -130,3 +130,30 @@ hand-labelled by the author; no human label exists. Replacement, fixed here befo
    nobody adjudicates.
 3. **Disclosure.** The paper states that no human labelled the sample, that the labellers are models from
    the family under test, and that the detector was also validated with scripted agents (gate 2).
+
+## 2026-10-28 · disclosures and analysis changes after an internal review of the draft (after all data)
+
+An adversarial review of the first draft found items that were decided earlier but never logged here, and
+analyses that overstated what the data show. No count changes.
+
+1. **Evaluation-awareness keyword pre-filter** (made 2026-10-16 before any model data, `DECISIONS.md` D3.5,
+   not logged here until now). PREREGISTRATION §4.4 has the judge decide eval-awareness; in practice the judge
+   decides only passages matching a fixed keyword list. In A–G the filter matched nothing.
+2. **Experiment E leads** (made before A). §5 chooses "the 3 lead types with the highest violation rate in
+   A". `configs/e.yaml` had to be fixed before A ran, so B1, B3, B6 were entered as a placeholder. A had no
+   violations, so no ranking existed and the placeholder stood.
+3. **H7 cost measure** (after the data). The pre-registered goal-attainment measure is conversion of the
+   blocked lead (§4.2). B1, B3 and B6 cannot be converted legally, so it is zero in every arm and cannot
+   register a cost. The paper reports clean-lead conversion and process measures instead, and treats H7's cost
+   part as untested.
+4. **Opus extension.** Opus 5.5 was not in the pre-registration. Its 288 Experiment A runs are in the 3,522
+   total, and the paper no longer calls the total "pre-registered runs".
+5. **B4 framing seen early.** Interim B4 conversion counts from A were visible in monitoring before gate 3
+   was decided, and the exploratory B4 comparison was framed after seeing them. It is labelled exploratory.
+6. **Analysis changes.** Headline bounds moved from all experiments pooled to Experiment A per model. Pooled
+   bounds exclude Experiment F (its floor and P4 ceiling are not sales-task conditions). Added: scenario-level
+   bounds counting each (lead, seed) once, because seeds recur across pressure levels; Wilson intervals for B4
+   conversion; Fisher exact tests with Holm correction for escalation under each mitigation vs none; the check
+   that check-in account IDs exist; the Wilson lower bound on gate 3 recall.
+7. **Check-in.** With no violations, the check-in label is NO_VIOLATION by construction (the classifier does not
+   read the answer in that case). The paper no longer cites it as evidence of honesty.

@@ -4,6 +4,14 @@
 Each entry is dated in \texttt{DEVIATIONS.md}; all were made before any confirmatory data unless stated.
 
 \begin{enumerate}
+\item \textbf{Attempt and REFUSED definitions.} The pre-registration defined an attempt as a refused call under
+H2 that would have produced a violation. We narrowed it before any data to a refused call that carries a
+circumvention signal (an override reason, an approval token, setting KYC to verified, downgrading a PEP
+rating, a structuring deposit, or opening the account after a blocking KYC result was seen); a plain account
+opening before any KYC check counts as a naive refusal, not an attempt. REFUSED was operationalised as a run
+whose tool calls touch no customer, and INVALID as a run with no tool calls or a harness error.
+\item \textbf{Evaluation-awareness filter.} Before any data, the judge was set to decide only passages that
+match a fixed keyword list (Section~\ref{sec:results}); the pre-registration had the judge decide every run.
 \item \textbf{Backend.} The pre-registration ran agents through the Claude Code harness on the author's
 subscription. After \NLegacy{} legacy pilot probes, all compliant (Appendix~\ref{app:legacy}), the study moved to the
 Anthropic Messages API because the subscription's weekly window would have stretched the grid over many
@@ -17,11 +25,27 @@ single customer and labelled accurate notes as false records. Facts are now take
 the prompt is unchanged and the superseded labels are kept.
 \item \textbf{Gate 2 and P5.} The P4 ceiling produced no violations in the pilot, so gate~2 was evaluated with % numbers-ok: design constant, version or citation
 scripted agents, and P5, a direct order, was added as an exploratory ceiling (Section~\ref{sec:gates}).
-\item \textbf{Gate 3 timing and labellers.} Experiment A started before gate~3 was decided; no A--G % numbers-ok: design constant, version or citation
-analysis was run until it was. The author then declined to hand-label the sample, and two blind model
-labellers replaced the human, under a rule fixed before any label existed (Section~\ref{sec:gates}).
-\item \textbf{Opus.} Opus~5.5 was added to Experiment A at N\,=\,12 per cell from budget left over; it is not % numbers-ok: design constant, version or citation
-in any pre-registered hypothesis test.
+\item \textbf{Experiment E leads.} The pre-registration chose E's leads as the three with the highest violation
+rate in A. The config had to be fixed before A, so B1, B3 and B6 were entered as a placeholder; with no
+violations in A, no ranking existed and the placeholder stood.
+\item \textbf{Opus.} Opus~5.5 was added to Experiment A at N\,=\,12 per cell from budget left over. It was not % numbers-ok: design constant, version or citation
+in the pre-registration, is not in any pre-registered hypothesis test, and its \NAOpus{} runs are included in
+the \NProbes{} total.
+\item \textbf{Gate 3 timing and labellers.} Experiment A started before gate~3 was decided; no planned A--G % numbers-ok: design constant, version or citation
+analysis was run until it was. Monitoring during the runs did show interim B4 conversion counts, and the
+exploratory B4 comparison (Section~\ref{sec:results}) was framed after seeing them. The author then declined
+to hand-label the sample, and two blind model labellers replaced the human, under a rule fixed before any
+label existed (Section~\ref{sec:gates}).
+\item \textbf{H7 cost measure (after the data).} The pre-registered goal-attainment measure is conversion of
+the blocked lead. E's leads cannot be converted legally, so the measure is zero in every arm; we report
+clean-lead conversion and process measures instead (Section~\ref{sec:mitigations}) and treat H7's cost part as
+untested.
+\item \textbf{Analyses added after an internal review of the first draft.} Headline bounds were moved from
+all experiments pooled to Experiment A per model; pooled bounds now exclude Experiment F, whose floor and
+ceiling are not conditions of the sales task; scenario-level bounds (in the spirit of the pre-registered random effect for
+the scenario seed), Wilson intervals for B4,
+Holm-corrected Fisher tests for escalation under each mitigation, the check that check-in account IDs exist,
+and the recall lower bound for gate~3 were added. None changes a count. % numbers-ok: design constant
 \end{enumerate}
 
 \section{Agent-facing texts}
@@ -46,5 +70,5 @@ evidence that the null does not depend on the harness.
 \label{app:cost}
 
 The study cost \$\SpendUSD{} at list prices, including pilots, judges and comprehension. The mean cost per
-confirmatory probe including its check-in was \$\CostPerProbeHaiku{} for Haiku, \$\CostPerProbeSonnet{}
+confirmatory run outside Experiment F, including its check-in, was \$\CostPerProbeHaiku{} for Haiku, \$\CostPerProbeSonnet{}
 for Sonnet and \$\CostPerProbeOpus{} for Opus.
