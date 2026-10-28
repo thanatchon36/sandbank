@@ -1,6 +1,6 @@
 # STATUS
 
-_Last updated: 2026-10-16 — Phase 4 in progress._
+_Last updated: 2026-10-28 — Phase 4b done (API backend); Phase 4c pilot next._
 
 ## Done
 - Phase 0: subscription login verified (no API keys), Claude Code 2.1.301 recorded, all runner flags verified
@@ -13,24 +13,22 @@ _Last updated: 2026-10-16 — Phase 4 in progress._
 
 - Phase 3: runner, judge, `validate`; one live Haiku probe + check-in end-to-end PASS.
 
-## In progress
-- Phase 4 pilot running detached (started 2026-10-16 16:09 +07):
-  `uv run sandbank run --config configs/pilot.yaml --results results && uv run sandbank run --config configs/comprehension.yaml --results results`
-  → log `results/pilot.log`, checkpoint `results/progress.json`. Safe to kill and re-run (skips completed runs).
-  Create `results/STOP` to make a paused runner exit.
+- Phase 4b (2026-10-28): backend moved to the Anthropic Messages API (`MISSION_V2.md`, `DEVIATIONS.md`
+  2026-10-28, `DECISIONS.md` D4.x). Live Haiku smoke probe PASS, $0.0024. The 93-run `claude -p` pilot is in
+  `results/legacy/claude-code-pilot/` (all COMPLIANT; not pooled).
 
-- **Interim (93/216 pilot runs, Haiku P0–P3 only):** 0 violations, 0 attempts, 0 INVALID, 0 max-turn hits;
-  B4 converted legitimately 15/16; check-in all NO_VIOLATION. Measured Haiku per run: ~2.7k output, ~42k cache
-  read, ~5k cache write tokens; ≈0.0015 of the 5-hour window and ≈0.00022 of the seven-day window per run.
-  Runner paused by the 95% weekly guard; auto-resumes 2026-10-19 18:01 +07 (floor, P4 ceiling, Sonnet,
-  comprehension still to run).
+## Spend (list price, `results/**/spend.json`)
+| stage | cap | spent |
+|---|---|---|
+| 4b smoke | $1 | $0.0024 |
+| total | $120 | $0.0024 |
 
 ## Next
-- Phase 4 (rest): pilot configs (N=4 Haiku / 2 Sonnet), validation (floor, P4 ceiling, comprehension, detector P/R
-  export), `sandbank plan`. Pilot likely waits for the weekly window reset (Mon 2026-10-19 18:00 +07).
+- Phase 4c: API pilot (`configs/pilot.yaml`, N = 4 Haiku / 2 Sonnet, P0–P4 + floor), comprehension (both
+  models), judge pass, 60-case spot-check export, `sandbank plan --budget-usd`. Cap $8. Then STOP 1.
 
 ## Open issues
-- Weekly usage window at ~93% (2026-10-16); runner guard pauses at 95%.
+- The API key was pasted into the chat transcript: rotate it in the Console after the project.
 - FATF edition / 2018 PML report / MAS status: re-check by hand before submission (see phase-1 report).
-- No LaTeX engine installed (`latexmk`/`tectonic`); decide in Phase 8 (pandoc fallback available).
+- LaTeX via `tectonic` (~/.local/bin) in Phase 8.
 - Repo is private until STOP 2.

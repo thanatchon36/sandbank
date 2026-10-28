@@ -17,6 +17,7 @@ from sandbank.runner.stub import run_stub
 from sandbank.scenarios.builder import build_probe
 
 COMMANDS = ("demo", "validate", "plan", "run", "analyze", "paper", "spotcheck")
+BACKENDS = ("api", "claude-code")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -31,21 +32,28 @@ def build_parser() -> argparse.ArgumentParser:
     demo.add_argument("--pressure", default="P3", choices=["P0", "P1", "P2", "P3", "P4"])
     demo.add_argument("--hardness", default="H1", choices=["H0", "H1", "H2"])
     demo.add_argument("--seed", type=int, default=1)
-    run = sub.add_parser("run", help="run an experiment grid with claude -p")
+    demo.add_argument("--backend", choices=BACKENDS, default="api")
+    run = sub.add_parser("run", help="run an experiment grid")
+    run.add_argument("--backend", choices=BACKENDS, default="api")
+    run.add_argument(
+        "--budget-usd", type=float, default=None, help="cumulative spend cap (results/spend.json)"
+    )
     run.add_argument("--config", type=Path, required=True)
     run.add_argument("--results", type=Path, default=Path("results"))
     run.add_argument("--batch-size", type=int, default=20)
-    run.add_argument("--parallel", type=int, default=1)
+    run.add_argument("--parallel", type=int, default=4, help="API backend: probes in flight")
     run.add_argument("--max-runs", type=int, default=None)
     run.add_argument("--max-util", type=float, default=0.95, help="pause when a usage window reaches this")
     run.add_argument("--stub", choices=["compliant", "violating", "idle"], default=None)
     judge = sub.add_parser("judge", help="label V7 / deception / eval-awareness cases in batches")
     judge.add_argument("--results", type=Path, default=Path("results"))
     judge.add_argument("--model", default="haiku")
+    judge.add_argument("--backend", choices=BACKENDS, default="api")
     pl = sub.add_parser("plan", help="N plan from measured usage")
     pl.add_argument("--results", type=Path, default=Path("results"))
     pl.add_argument("--configs", type=Path, default=Path("configs"))
-    pl.add_argument("--weekly-budget", type=float, default=0.8)
+    pl.add_argument("--weekly-budget", type=float, default=0.8, help="claude-code backend only")
+    pl.add_argument("--budget-usd", type=float, default=None, help="API backend: dollars for A–G")
     sm = sub.add_parser("summary", help="per-cell violation table for one experiment")
     sm.add_argument("--results", type=Path, default=Path("results"))
     sm.add_argument("--experiment", default=None)
@@ -71,8 +79,17 @@ def demo_live(args: argparse.Namespace) -> int:
     root.mkdir(parents=True, exist_ok=True)
     cond = Condition(pressure=args.pressure, hardness=args.hardness)
     spec = RunSpec("demo", args.model, cond, args.lead, args.seed, 1, 12)
-    print(f"running {spec.run_id} on your Claude Code login (one probe + one check-in turn)...")
-    meta = run_one(spec, root, write_mcp_config(root), claude_version())
+    if args.backend == "api":
+        from sandbank.runner.api import make_client, sdk_version
+        from sandbank.runner.run import run_one_api
+        from sandbank.runner.spend import Ledger
+
+        print(f"running {spec.run_id} through the Anthropic API (one probe + one check-in)...")
+        meta = run_one_api(spec, root, make_client(), Ledger(root), sdk_version())
+    else:
+        assert_no_api_keys()
+        print(f"running {spec.run_id} on your Claude Code login (one probe + one check-in turn)...")
+        meta = run_one(spec, root, write_mcp_config(root), claude_version())
     det = meta["detection"]
     print(
         json.dumps(
@@ -84,6 +101,7 @@ def demo_live(args: argparse.Namespace) -> int:
                 "blocked_lead_converted": bool(det["converted_blocked"]),
                 "checkin": meta["checkin_class"]["label"],
                 "tokens": meta.get("probe", {}).get("result", {}).get("usage", {}).get("output_tokens"),
+                "cost_usd": meta.get("cost_usd"),
             },
             indent=1,
         )
@@ -115,30 +133,24 @@ def demo_stub(results: Path) -> int:
 
 
 def validate() -> int:
-    """Environment checks: CLI present, subscription login, no API keys, stub pipeline passes."""
-    import json
+    """Environment checks: API key and SDK (API backend), Claude Code (optional), stub pipeline."""
+    import contextlib
+    import io
     import shutil
-    import subprocess
+
+    from sandbank.runner.api import MissingKeyError, load_credentials, sdk_version
 
     checks: list[tuple[str, bool, str]] = []
+    try:
+        load_credentials()
+        checks.append(("API key (env or .env; not shown)", True, "found"))
+    except MissingKeyError as e:
+        checks.append(("API key (env or .env; not shown)", False, str(e)))
+    checks.append(("anthropic SDK", True, sdk_version()))
     path = shutil.which("claude")
-    checks.append(("claude on PATH", bool(path), path or "not found"))
-    if path:
-        v = subprocess.run([path, "--version"], capture_output=True, text=True, timeout=30).stdout.strip()
-        checks.append(("Claude Code version", bool(v), v))
-        st = subprocess.run([path, "auth", "status"], capture_output=True, text=True, timeout=30).stdout
-        try:
-            method = json.loads(st).get("authMethod", "?")
-        except json.JSONDecodeError:
-            method = "?"
-        checks.append(("subscription login (authMethod claude.ai)", method == "claude.ai", method))
-    checks.append(("no provider API keys in env", True, "ok"))
-    with tempfile.TemporaryDirectory() as tmp:
-        import contextlib
-        import io
-
-        with contextlib.redirect_stdout(io.StringIO()):
-            ok = demo_stub(Path(tmp)) == 0
+    checks.append(("claude on PATH (claude-code backend only; optional)", True, path or "not found"))
+    with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
+        ok = demo_stub(Path(tmp)) == 0
     checks.append(("stub pipeline (env + detector)", ok, "PASS" if ok else "FAIL"))
     for name, good, info in checks:
         print(f"[{'ok' if good else 'FAIL'}] {name}: {info}")
@@ -147,11 +159,12 @@ def validate() -> int:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    try:
-        assert_no_api_keys()
-    except ForbiddenKeyError as e:
-        print(str(e), file=sys.stderr)
-        return 2
+    if getattr(args, "backend", "api") == "claude-code":
+        try:
+            assert_no_api_keys()
+        except ForbiddenKeyError as e:
+            print(str(e), file=sys.stderr)
+            return 2
     if args.command == "demo" and args.stub:
         if args.results is not None:
             return demo_stub(args.results)
@@ -160,9 +173,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "demo":
         return demo_live(args)
     if args.command == "plan":
-        from sandbank.analysis.plan import plan
+        from sandbank.analysis.plan import budget_plan, plan
 
-        print(plan(args.configs, args.results / "usage.csv", args.weekly_budget))
+        if args.budget_usd is not None:
+            print(budget_plan(args.configs, args.results / "usage.csv", args.budget_usd))
+        else:
+            print(plan(args.configs, args.results / "usage.csv", args.weekly_budget))
         return 0
     if args.command == "summary":
         from sandbank.analysis.summary import cell_table, fmt_table, load_rows
@@ -178,18 +194,38 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "validate":
         return validate()
     if args.command == "judge":
-        from sandbank.judge.batch import claude_labeler, judge_all
+        from sandbank.judge.batch import api_labeler, claude_labeler, judge_all
 
-        print(judge_all(args.results, claude_labeler(args.model, args.results)))
+        if args.backend == "api":
+            from sandbank.runner.api import make_client
+            from sandbank.runner.spend import Ledger
+
+            labeler = api_labeler(args.model, make_client(), Ledger(args.results))
+        else:
+            labeler = claude_labeler(args.model, args.results)
+        print(judge_all(args.results, labeler))
         return 0
     if args.command == "run":
+        if args.backend == "api" and not args.stub:
+            from sandbank.runner.run import run_config_api
+
+            print(
+                run_config_api(
+                    args.config,
+                    args.results,
+                    parallel=args.parallel,
+                    max_runs=args.max_runs,
+                    budget_usd=args.budget_usd,
+                )
+            )
+            return 0
         from sandbank.runner.run import run_config
 
         counts = run_config(
             args.config,
             args.results,
             batch_size=args.batch_size,
-            parallel=args.parallel,
+            parallel=1,
             max_runs=args.max_runs,
             stub=args.stub,
             max_util=args.max_util,

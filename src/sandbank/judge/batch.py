@@ -123,3 +123,22 @@ def load_labels(path: Path) -> dict[str, str]:
             r = json.loads(line)
             out[r["case_id"]] = r["label"]
     return out
+
+
+def api_labeler(model: str, client: Any, ledger: Any) -> Labeler:
+    """Same prompts, schema and batching as :func:`claude_labeler`, through the Messages API."""
+    from sandbank.judge.prompts import PROMPTS, schema, user_prompt
+    from sandbank.runner.api import structured
+
+    def label(task: str, batch: list[dict[str, Any]]) -> dict[str, str]:
+        out, _ = structured(
+            client,
+            model=model,
+            system=PROMPTS[task],
+            user=user_prompt(batch),
+            schema=schema(task),
+            on_call=lambda c: ledger.add(c.cost_usd, experiment="judge", model=model, kind="judge"),
+        )
+        return {str(x["case_id"]): str(x["label"]) for x in out.get("labels", [])}
+
+    return label

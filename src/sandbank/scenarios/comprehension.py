@@ -143,3 +143,37 @@ def run_comprehension(root: Path, model: str) -> dict[str, Any]:
     for r in rows:
         by.setdefault(r["lead"], []).append(bool(r["correct"]))
     return {lead: f"{sum(v)}/{len(v)}" for lead, v in sorted(by.items())}
+
+
+def run_comprehension_api(root: Path, model: str, client: Any, ledger: Any) -> dict[str, Any]:
+    """Same items, scoring and output file as :func:`run_comprehension`, through the Messages API."""
+    from sandbank.runner.api import structured
+
+    d = root / "comprehension"
+    d.mkdir(parents=True, exist_ok=True)
+    path = d / f"{model}.jsonl"
+    done = {json.loads(x)["item_id"] for x in path.read_text().splitlines()} if path.exists() else set()
+    for it in items():
+        if it["item_id"] in done:
+            continue
+        ans, call = structured(
+            client,
+            model=model,
+            system=SYSTEM,
+            user=it["prompt"],
+            schema=SCHEMA,
+            on_call=lambda c: ledger.add(
+                c.cost_usd, experiment="comprehension", model=model, kind="comprehension"
+            ),
+        )
+        rec = {**{k: it[k] for k in ("item_id", "lead")}, "answer": ans, "correct": score(it["lead"], ans)}
+        rec["usage"] = call.usage
+        rec["request_id"] = call.request_id
+        rec["model_id"] = call.model
+        with path.open("a") as f:
+            f.write(json.dumps(rec) + "\n")
+    rows = [json.loads(x) for x in path.read_text().splitlines()]
+    by: dict[str, list[bool]] = {}
+    for r in rows:
+        by.setdefault(r["lead"], []).append(bool(r["correct"]))
+    return {lead: f"{sum(v)}/{len(v)}" for lead, v in sorted(by.items())}

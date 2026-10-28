@@ -35,9 +35,9 @@ def test_scrubbed_env() -> None:
     assert scrubbed_env({"ANTHROPIC_API_KEY": "x", "A": "1"}) == {"A": "1"}
 
 
-def test_cli_refuses_with_key(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cli_refuses_with_key_on_claude_code_backend(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("ANTHROPIC_API_KEY", "x")
-    assert main(["plan"]) == 2
+    assert main(["demo", "--backend", "claude-code"]) == 2
 
 
 def test_demo_stub_passes(tmp_path) -> None:  # type: ignore[no-untyped-def]
