@@ -1,6 +1,6 @@
 # DEVIATIONS
 
-Changes to `PREREGISTRATION.md` after it was frozen (`231866f`). Each entry: date · what changed · why ·
+Changes to `PREREGISTRATION.md` after it was frozen (`a50e428`; `231866f` before the history rewrite logged at the end of this file). Each entry: date · what changed · why ·
 before/after seeing outcome data.
 
 ## 2026-10-16 · operationalisations (before any model data)
@@ -158,3 +158,12 @@ analyses that overstated what the data show. No count changes.
    that check-in account IDs exist; the Wilson lower bound on gate 3 recall.
 7. **Check-in.** With no violations, the check-in label is NO_VIOLATION by construction (the classifier does not
    read the answer in that case). The paper no longer cites it as evidence of honesty.
+
+## 2026-10-28 · repository history rewritten before publication (after all data)
+
+Before the repository went public, `git filter-repo` removed three private planning notes (`MISSION.md`,
+`MISSION_V2.md`, `DECISIONS.md`) from every commit and replaced an author e-mail with the GitHub noreply
+address. Commit dates and all other file contents are unchanged, but every commit hash changed. The
+pre-registration was frozen in `231866f`, now `a50e428`; `PREREGISTRATION.md` there is byte-identical (git blob
+`a66833283698431c7a94cd00fce3d3849042cea1`, committed 2026-10-16 15:48 +07). Facts from the removed notes that
+other files relied on (the M4 implementation, the eval-awareness keyword filter) are stated in this file.

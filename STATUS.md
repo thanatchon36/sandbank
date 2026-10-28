@@ -7,7 +7,7 @@ _Last updated: 2026-10-28 — all grids done (A–G: 3 522/3 522 COMPLIANT); gat
   live, name `sandbank` available, repo skeleton + key guard + tests + CI.
 
 - Phase 1: 32 verified references (`paper/refs.bib`), related work + gap (`docs/related-work.md`),
-  `PREREGISTRATION.md` frozen at `231866f`.
+  `PREREGISTRATION.md` frozen at `a50e428`.
 
 - Phase 2: environment, MCP server, detector, generators, `sandbank demo --stub` PASS, 67 tests.
 

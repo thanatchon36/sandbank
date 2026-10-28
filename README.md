@@ -5,7 +5,8 @@
 [![CI](https://github.com/thanatchon36/sandbank/actions/workflows/ci.yml/badge.svg)](https://github.com/thanatchon36/sandbank/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Status](https://img.shields.io/badge/status-preprint-orange)](STATUS.md)
-[![Pre-registered](https://img.shields.io/badge/pre--registered-231866f-blue)](PREREGISTRATION.md)
+[![Pre-registered](https://img.shields.io/badge/pre--registered-a50e428-blue)](PREREGISTRATION.md)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23732290.svg)](https://doi.org/10.5281/zenodo.23732290)
 
 📄 **[Paper (PDF)](paper/main.pdf)** · 📊 **[Figures](figures/out/)** · 🧾 **[Pre-registration](PREREGISTRATION.md)** ·
 🔀 **[Deviations](DEVIATIONS.md)** · 🔁 **[Reproduce](REPRODUCE.md)** · ⚖️ **[Responsible use](RESPONSIBLE_USE.md)**

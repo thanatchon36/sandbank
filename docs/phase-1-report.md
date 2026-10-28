@@ -9,4 +9,4 @@
 - **Gap (short):** SandBank is a domain-specific, multi-measure extension of KPI-pressure constraint-violation
   work (ODCV-Bench) into KYC/AML, adding hard-control attempts, Compliance-question deception, eval-awareness,
   and mitigations. Not a new phenomenon; we will not claim one.
-- `PREREGISTRATION.md` frozen at commit `231866f` before any pilot.
+- `PREREGISTRATION.md` frozen at commit `a50e428` before any pilot.
