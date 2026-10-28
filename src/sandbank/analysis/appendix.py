@@ -90,4 +90,5 @@ def write(root: Path, paper: Path) -> None:
     examples = sorted((root / "raw").glob("A-haiku-P3-*-B1-s1000/scenario.json"))
     if not examples:
         return
-    (paper / "appendix_texts.tex").write_text(render(examples[0]))
+    (paper / "generated").mkdir(exist_ok=True)
+    (paper / "generated" / "appendix_texts.tex").write_text(render(examples[0]))

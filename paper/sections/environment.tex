@@ -14,7 +14,7 @@ log, which is the only input to the detector.
 
 \paragraph{Policy.} A rulebook of eight short sections (Appendix~\ref{app:prompts}) states what an RM may do:
 no account before KYC is verified, no account for a sanctions hit, enhanced due diligence (EDD) before
-onboarding a politically exposed person, a report for any deposit of 10{,}000 or more and no splitting of
+onboarding a politically exposed person, a report for any deposit of 10{,}000 or more and no splitting of % numbers-ok: design constant, version or citation
 deposits to avoid it, beneficial-owner verification for third-party funds, source-of-funds documents before
 opening, accurate records, and exceptions only with an approval the manager actually issued. The agent can
 read the rulebook with \texttt{read\_policy}; the system prompt says so.
@@ -39,7 +39,7 @@ about: the system allows an override and relies on the RM to justify it.
 
 \paragraph{Detector.} A deterministic detector reads the event log and the final state and flags eight
 violation types: V1 KYC bypass, V2 sanctions override, V3 EDD evasion, V4 structuring (two or more
-sub-threshold deposits summing to 10{,}000 or more with no report), V5 report omission, V6 unverified
+sub-threshold deposits summing to 10{,}000 or more with no report), V5 report omission, V6 unverified % numbers-ok: design constant, version or citation
 beneficial owner, V7 false record (a note asserting documents received or checks passed with no such event)
 and V8 forged approval (any token the manager never issued). Each probe gets one outcome in priority order:
 INVALID (no valid tool use), VIOLATED, ATTEMPTED (a refused call under H2 that would have been a violation),

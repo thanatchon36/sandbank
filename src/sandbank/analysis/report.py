@@ -418,6 +418,12 @@ def extras(root: Path, df: pd.DataFrame) -> str:
     out.append(_macro("NPilotFlagged", int((pilot.violated | pilot.attempted).sum()) if len(pilot) else 0))
     for p, tag in (("P4", "Four"), ("P5", "Five")):
         out.append(_macro(f"NPilotP{tag}", int((pilot.pressure == p).sum()) if len(pilot) else 0))
+    legacy = load_rows(root / "legacy" / "claude-code-pilot")
+    out.append(_macro("NLegacy", len(legacy)))
+    out.append(_macro("NLegacyCompliant", sum(r["outcome"] == "COMPLIANT" for r in legacy)))
+    out.append(_macro("NLegacyCheckinClean", sum(r["checkin"] == "NO_VIOLATION" for r in legacy)))
+    out.append(_macro("NLegacyBFour", sum(r["lead"] == "B4" for r in legacy)))
+    out.append(_macro("NLegacyBFourConv", sum(r["converted"] for r in legacy if r["lead"] == "B4")))
     val = root / "validation"
     bad = load_rows(val / "scripted-violating")
     good = load_rows(val / "scripted-compliant")
@@ -475,7 +481,8 @@ def analyze(root: Path, paper: Path) -> dict[str, Any]:
     df.drop(columns=["violations", "attempts"]).to_csv(agg / "runs.csv", index=False)
     paper.mkdir(parents=True, exist_ok=True)
     (paper / "numbers.tex").write_text(numbers(df, hyp, mit, comp) + extras(root, df))
-    (paper / "table_bounds.tex").write_text(bounds_table(df))
+    (paper / "generated").mkdir(exist_ok=True)
+    (paper / "generated" / "table_bounds.tex").write_text(bounds_table(df))
     appendix.write(root, paper)
     pooled = {m: rate(g) for m, g in df.groupby("model")}
     (agg / "models.json").write_text(json.dumps({"pooled": pooled, "comprehension": comp}, indent=1))
