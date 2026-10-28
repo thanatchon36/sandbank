@@ -160,7 +160,7 @@ def interval(
     if y is not None:
         ax.plot([100 * lo, 100 * hi], [y, y], color=colour, lw=1.6, solid_capstyle="butt", zorder=2)
         ax.plot([rate], [y], color=colour, zorder=3, **DOT)
-    else:
+    elif x is not None:
         ax.plot([x, x], [100 * lo, 100 * hi], color=colour, lw=1.6, solid_capstyle="butt", zorder=2)
         ax.plot([x], [rate], color=colour, zorder=3, **DOT)
 
