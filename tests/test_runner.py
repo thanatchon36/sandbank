@@ -54,7 +54,8 @@ def test_guard_and_limits() -> None:
     assert is_limit(rej) and reset_epoch(rej) == 5
 
 
-def test_agent_argv_never_bare(tmp_path: Path) -> None:
+def test_agent_argv_never_bare(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("sandbank.runner.claude.shutil.which", lambda _: "/usr/bin/claude")  # CI has no CLI
     argv = agent_argv("hi", model="haiku", system_prompt="s", mcp_config=tmp_path / "m.json", max_turns=12)
     assert "--bare" not in argv and "--strict-mcp-config" in argv and argv[argv.index("--tools") + 1] == ""
     assert argv[argv.index("--allowedTools") + 1] == "mcp__sandbank"
