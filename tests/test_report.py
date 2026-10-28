@@ -38,3 +38,7 @@ def test_analyze_on_scripted_runs(tmp_path: Path) -> None:
     assert "\\newcommand{\\NProbes}{8}" in num and "UpperHaiku" in num
     hyp = (root / "aggregated" / "hypotheses.csv").read_text()
     assert "H1" in hyp and "H8" in hyp
+    from sandbank.analysis.figures import make_all
+
+    figs = make_all(root / "aggregated", tmp_path / "figs")
+    assert "fig1_bounds.pdf" in figs and "fig3_goal.pdf" in figs

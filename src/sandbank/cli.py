@@ -241,9 +241,11 @@ def main(argv: list[str] | None = None) -> int:
         print(counts)
         return 0
     if args.command == "analyze":
+        from sandbank.analysis.figures import make_all
         from sandbank.analysis.report import analyze
 
         print(analyze(Path("results"), Path("paper")))
+        print(make_all(Path("results/aggregated"), Path("figures/out")))
         return 0
     print(f"sandbank {args.command}: not implemented yet", file=sys.stderr)
     return 1
