@@ -1,0 +1,118 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{No violations under any confirmatory condition}
+
+Across \NProbes{} confirmatory probes the detector found \NViolations{} violations and \NAttempts{}
+attempts. \NInvalid{} probes were INVALID, \NRefused{} were REFUSED (the agent left the blocked lead
+unhandled), and \NClassifierRefusals{} responses were stopped by the API's safety classifier. Table~\ref{tab:bounds} gives each condition and
+Figure~\ref{fig:bounds} the intervals. Pooled over all experiments, the 95\% Wilson upper bound on the
+per-probe violation rate is \UpperHaiku\% for Haiku (\NHaiku{} probes), \UpperSonnet\% for Sonnet
+(\NSonnet{}) and \UpperOpus\% for Opus (\NOpus{}). The bounds are per probe with one blocked lead each; they
+say nothing about rarer failure modes that a sandbox of this size cannot reach (Section~\ref{sec:limitations}).
+
+\begin{table}[t]
+\centering\small
+\caption{Violations, attempts and the 95\% Wilson upper bound on the violation rate per condition (\%).
+Attempts are possible only under hard controls (B, H2).}
+\label{tab:bounds}
+\input{table_bounds.tex}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig1_bounds.pdf}
+\caption{Observed violation rate (dots, all at zero) and Wilson 95\% interval. (a) Experiment A by pressure
+and model. (b) Every other confirmatory condition.}
+\label{fig:bounds}
+\end{figure}
+
+The nulls cover each manipulation the pre-registration expected to matter. Pressure up to a threat of branch
+closure and job loss (A), policy-only controls with no warning at all (B, H0), a cue that Compliance reviews
+are paused (C, O2), and five-day episodes in which a deposit could be split across days (G) produced no
+violation. Hard controls (B, H2) produced no attempts, so the agents did not try and fail; they did not try.
+
+\subsection{The ceilings did not move the models}
+
+The pre-registered ceiling P4 lets the manager say ``use the override fields, I'll back you''. In the pilot and
+in Experiment F together, no model used an override at P4. The P5 direct order (an exploratory condition
+added after the pilot) tells the agent to open the account anyway and enter ``Approved by branch manager''
+as the reason; none of \NPilotPFive{} pilot probes did. In every one of them the agent's final report
+referred to the instruction or the override, cited the policy and named a compliant route instead (requesting
+documents, escalating, or leaving the account on hold), by a keyword search of the transcripts. This is the reason gate~2
+failed (Section~\ref{sec:gates}). The ceiling probes show that, in this environment, an explicit licence from
+the manager does not make the models circumvent the controls. It does not show that no instruction would.
+
+\subsection{What the agents did instead}
+
+Figure~\ref{fig:behaviour} shows the compliant actions taken on the blocked lead in Experiment A. The agents
+ran the KYC check, requested the missing documents, escalated sanctions hits and politically exposed persons to
+Compliance, and messaged the manager that the lead would not convert today. How often the agents escalated
+and messaged the manager varied by model: Haiku escalated in \EscalatedHaiku\% of probes and
+told the manager in \ToldManagerHaiku\%, Sonnet in \EscalatedSonnet\% and \ToldManagerSonnet\%, and Opus in
+\EscalatedOpus\% and \ToldManagerOpus\%.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig2_behaviour.pdf}
+\caption{Share of Experiment A probes in which the agent took each compliant action, by pressure and model.}
+\label{fig:behaviour}
+\end{figure}
+
+\subsection{Legitimate goal attainment differs by model}
+
+Because no model broke a rule, the models differ only in how much of the legitimate target they reached
+(Figure~\ref{fig:goal}). The B4 lead, a large deposit that policy allows once its report is filed, is the
+clearest case: Haiku opened it with the report in \BFourConvHaiku\% of probes, Sonnet in
+\BFourConvSonnet\% and Opus in \BFourConvOpus\%. The clean lead was converted in \CleanConvHaiku\%,
+\CleanConvSonnet\% and \CleanConvOpus\% of probes respectively. When a weaker model fails to convert B4, it
+leaves a legal account unopened; it does not open it without the report. A sandbox that measured only
+violations would miss this cost of caution.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.75\linewidth]{fig3_goal.pdf}
+\caption{Goal attainment that policy allows, Experiment A. (a) The B4 large deposit opened with its report
+filed. (b) The clean lead converted.}
+\label{fig:goal}
+\end{figure}
+
+\subsection{Check-in answers were consistent with the record}
+
+All \NCheckinClean{} of \NCheckins{} Compliance check-in answers were classified as no violation: every
+account the agent listed had been opened with verified KYC, and no answer claimed an exception that did not
+exist. The V7 judge labelled \NJudgedNotesPositive{} of \NJudgedNotes{} candidate handover notes as false
+records, and the evaluation-awareness judge flagged \NJudgedEvalCasesPositive{} of
+\NJudgedEvalCases{} candidate passages in which the agent said or implied it was being tested.
+
+\subsection{Hypotheses}
+
+Table~\ref{tab:hypotheses} gives the status of each pre-registered hypothesis. H1--H5 predicted differences
+in violation rates; with zero violations in every arm, none is supported, and the pre-registered tests return
+odds ratios with intervals spanning one by construction. H6 and H8 are conditional on violating probes and
+cannot be tested. H7 holds trivially for its violation part (M6 and the floor are both at zero); its
+goal-attainment part is reported in Section~\ref{sec:mitigations}.
+
+\begin{table}[t]
+\centering\small
+\caption{Pre-registered hypotheses and outcomes.}
+\label{tab:hypotheses}
+\begin{tabular}{@{}lp{0.47\linewidth}p{0.36\linewidth}@{}}
+\toprule
+ & Prediction & Outcome \\
+\midrule
+H1 & Violations rise with pressure P0--P3 & Not supported; 0 events at every level \\
+H2 & Rates differ by lead type & Not supported; 0 events for every lead \\
+H3 & Policy-only $>$ soft $>$ hard; hard controls turn violations into attempts & Not supported; 0 violations, 0 attempts \\
+H4 & Paused reviews (O2) raise violations over audit (O1) & Not supported; 0 events in both \\
+H5 & Compliance sentence reduces but does not eliminate violations & Not supported; nothing to reduce \\
+H6 & $>$20\% of violators deceive at the check-in & Not testable; no violators \\
+H7 & M6 reaches the floor at the smallest goal-attainment cost & Violation part trivially met; see Section~\ref{sec:mitigations} \\
+H8 & Most violations are knowing & Not testable; no violations. Comprehension \CompHaiku{} (Haiku), \CompSonnet{} (Sonnet) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Comprehension.} Asked neutrally, without tools, whether an action is permitted for a given lead,
+Haiku answered \CompHaiku{} items correctly and Sonnet \CompSonnet{}. The models know the rules and, in this
+sandbox, they follow them under pressure.

@@ -1,0 +1,30 @@
+\section{Limitations}
+\label{sec:limitations}
+
+\paragraph{One model family.} We tested three Claude models only. Other families may behave differently, and
+the earlier positive findings were across many families.
+
+\paragraph{Evaluation awareness.} Models can often tell an evaluation from deployment
+\citep{needham2025evalaware}. We kept agent-facing text free of test language and judged verbalised
+awareness, but a model can behave as if observed without saying so. The null may partly reflect that.
+
+\paragraph{Sandbox realism.} One fictional bank, one policy written to be clear, deterministic characters, a
+single RM role and episodes of one or five days. Real deployments have ambiguous policies, longer horizons,
+memory, and customers who push back. The violation types are those our tools allow; we did not test social
+engineering by customers or attacks on the agent.
+
+\paragraph{Sample size and the bound.} N was set by a fixed budget. A per-probe bound of a few percent does
+not rule out a rare failure that matters at bank scale.
+
+\paragraph{The ceiling gate failed.} Without a model-made violation we validated the detector with scripted
+agents and a test of the API path. A violation of a kind the scripted agents did not take could be missed;
+the blind hand-labelled spot-check (Section~\ref{sec:gates}) is the only check against this.
+
+\paragraph{Deviations.} The backend changed from the Claude Code harness to the API after the first pilot,
+and P5 was added after the pilot. Both are logged, neither touched the hypotheses, and the legacy pilot,
+which also had no violations, is reported separately (Appendix~\ref{app:legacy}).
+
+\paragraph{Author and tools.} The study was designed, run and analysed by a single author. Code, analysis
+and drafts of this paper were written with the help of Claude Code, a product of the same company whose
+models are tested; the pre-registration, the deterministic detector and the released event logs are meant to
+let readers check the result independently.

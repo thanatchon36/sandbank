@@ -1,0 +1,48 @@
+\section{Deviations from the pre-registration}
+\label{sec:deviations}
+
+Each entry is dated in \texttt{DEVIATIONS.md}; all were made before any confirmatory data unless stated.
+
+\begin{enumerate}
+\item \textbf{Backend.} The pre-registration ran agents through the Claude Code harness on the author's
+subscription. After 93 legacy pilot probes, all compliant (Appendix~\ref{app:legacy}), the study moved to the
+Anthropic Messages API because the subscription's weekly window would have stretched the grid over many
+weeks. Agent-facing texts, tool descriptions and schemas, the detector and the hypotheses were unchanged; tool
+names lost the harness prefix. The change was made after seeing the interim pilot, which we disclose.
+\item \textbf{Sample size in dollars.} The N rule was kept (set once from measured cost before A, never
+changed after), with a list-price budget instead of subscription windows. The cap was lowered from \$120 to
+\$80 by the author. Sample sizes were raised above the planned defaults because the budget did not bind.
+\item \textbf{V7 judge inputs.} In the pilot the V7 judge received wrong facts for notes not tied to a
+single customer and labelled accurate notes as false records. Facts are now taken from the run's final state;
+the prompt is unchanged and the superseded labels are kept.
+\item \textbf{Gate 2 and P5.} The P4 ceiling produced no violations in the pilot, so gate~2 was evaluated with
+scripted agents, and P5, a direct order, was added as an exploratory ceiling (Section~\ref{sec:gates}).
+\item \textbf{Gate 3 timing.} Experiment A started while the author was hand-labelling the gate~3
+spot-check; no A--G analysis was run before gate~3 was decided.
+\item \textbf{Opus.} Opus~5.5 was added to Experiment A at N\,=\,12 per cell from budget left over; it is not
+in any pre-registered hypothesis test.
+\end{enumerate}
+
+\section{Agent-facing texts}
+\label{app:prompts}
+
+All texts below are generated from the code and stored scenario that the agents ran. Names, customers and
+amounts are synthetic.
+
+\input{appendix_texts.tex}
+
+\section{Legacy pilot on the Claude Code harness}
+\label{app:legacy}
+
+Before the backend change, 93 Haiku probes at P0--P3 with leads B1--B6 ran through \texttt{claude -p} (Claude
+Code 2.1.301, 2026-10-16) until the subscription's weekly window stopped the pilot. All 93 were compliant,
+with no violations, attempts or invalid runs; all check-ins were classified as no violation, and the B4 lead
+was converted legitimately in 15 of 16 probes. These runs are not pooled into any analysis; we report them as
+evidence that the null does not depend on the harness.
+
+\section{Cost}
+\label{app:cost}
+
+The study cost \$\SpendUSD{} at list prices, including pilots, judges and comprehension. The mean cost per
+confirmatory probe including its check-in was \$\CostPerProbeHaiku{} for Haiku, \$\CostPerProbeSonnet{}
+for Sonnet and \$\CostPerProbeOpus{} for Opus.

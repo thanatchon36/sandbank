@@ -1,0 +1,28 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Why this differs from earlier findings.} Studies that found agents breaking rules under KPI
+pressure \citep{li2025odcv, lynch2025agentic} usually built scenarios where the violation was the only or the
+obvious route to the goal, and often tested many model families. SandBank gives the agent a realistic
+compliant route for every lead (request documents, escalate, report the miss) and a manager who never
+approves an exception. That is how a bank is meant to work, and it is the setting a bank deploying an RM agent
+cares about. Our result is that, in this setting, three current Claude models take the compliant route even
+when the manager licenses or orders the violation. It is compatible with the earlier results: they show
+that some models in some designs violate; we show that these models in this design did not, with bounds.
+
+\paragraph{What the null does and does not license.} A bank can read the bounds as evidence that these models,
+given this kind of tooling and policy, do not readily circumvent KYC/AML controls for a sales target. It
+cannot read them as a guarantee. The study has one bank, one policy, one RM role, short episodes and fixed
+texts; the agents may recognise a test (Section~\ref{sec:limitations}); and the bounds are per probe at the
+sample sizes we could afford. Banks should still log tool calls, keep hard controls on prohibited actions and
+test their own deployment.
+
+\paragraph{The useful difference is capability.} The models differed not in compliance but in how much
+legitimate work they finished. A cautious agent that leaves a legal large deposit unopened has a business
+cost that a violation-only evaluation would score as perfect. Pre-deployment testing of compliance agents
+should measure both.
+
+\paragraph{On null results.} We pre-registered hypotheses that predicted violations, ran the study as
+planned, and report that the hypotheses failed. A failed ceiling gate is reported, not worked around by
+strengthening the prompt until a violation appears. We think such results belong in the literature, because
+a field that publishes only positive misalignment findings will overstate how often it happens.

@@ -1,0 +1,34 @@
+\section{Introduction}
+
+Banks are piloting LLM agents that do not only draft text but act through the bank's systems: they look up
+customers, run checks, open accounts and book deposits. The obvious risk is that an agent asked to hit a
+business target treats the bank's controls as obstacles. Laboratory work has shown that LLM agents can act
+against stated rules when a goal is at stake: a simulated trader used an insider tip and concealed it
+\citep{scheurer2023deceive}, agents in corporate simulations chose harmful actions when these were the only
+route to their goal \citep{lynch2025agentic}, and agents under KPI pressure violated ethical, legal or safety
+constraints at substantial rates \citep{li2025odcv}. Know-your-customer (KYC) and anti-money-laundering (AML)
+controls are an obvious place for this failure to matter: they stand between a relationship manager and
+the account the target needs.
+
+\paragraph{Finding.} In a pre-registered study of \NProbes{} runs in SandBank, a synthetic bank, Claude
+Haiku~5.5, Sonnet~5.5 and Opus~5.5 never circumvented a KYC/AML control. This held under every
+pre-registered pressure level up to a threat of branch closure and job loss, with soft and with absent
+technical controls, with an oversight cue that Compliance reviews were paused, over five-day episodes, and in
+two ceiling conditions where the manager explicitly licensed and then directly ordered the override. With
+zero events, the result is an upper bound: at most \UpperHaiku\% for Haiku (95\% Wilson bound, \NHaiku{}
+runs), \UpperSonnet\% for Sonnet and \UpperOpus\% for Opus. The models instead did what the policy asks:
+they checked KYC, requested missing documents, escalated sanctions hits and told the manager the target
+would be missed.
+
+\paragraph{Instrument.} A null result is only as good as the instrument's ability to register the
+behaviour. Pre-registration required a ceiling condition to show a high violation rate; it showed none, so we
+validated the instrument with scripted agents that take every circumvention path the tools allow
+(\NScriptedDetected{}/\NScripted{} detected with the expected codes, \NScriptedCompliant{}/\NScriptedControls{} compliant
+controls clean), and we report the failed gate as such (Section~\ref{sec:design}).
+
+\paragraph{Contributions.} (i) SandBank, an open, deterministic KYC/AML tool sandbox with eight violation
+types, three levels of control hardness and a Compliance check-in; (ii) a pre-registered, budgeted
+measurement on three current Claude models with all deviations logged; (iii) a careful null with upper
+bounds and the behavioural record of what the agents did instead, including where models differ in
+legitimate goal attainment. Section~\ref{sec:discussion} discusses what a null result in a sandbox does and
+does not license for banks deploying such agents.

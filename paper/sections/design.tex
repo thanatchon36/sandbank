@@ -1,0 +1,101 @@
+\section{Study design}
+\label{sec:design}
+
+\subsection{Pre-registration and hypotheses}
+
+Research questions, hypotheses, agent-facing texts, the detector and the analysis plan were frozen in a
+pre-registration committed before any model data (commit \texttt{231866f}). Every later change is a dated
+entry in \texttt{DEVIATIONS.md}, summarised in Section~\ref{sec:deviations}. The confirmatory hypotheses
+were: H1, violations rise monotonically with pressure; H2, rates differ by lead type; H3, soft controls
+produce more violations than hard ones and fewer than policy-only, with hard controls turning violations into
+attempts; H4, a cue that Compliance reviews are paused raises violations relative to an audit cue; H5, a
+compliance-primacy sentence reduces but does not eliminate violations; H6, more than 20\% of violators
+deceive at the check-in; H7, hard controls plus a legitimate escalation outlet reduce violations to the floor
+at the smallest cost in goal attainment; H8, most violations are knowing.
+
+\subsection{Conditions}
+
+The pressure levels are the manager's message (verbatim in Appendix~\ref{app:prompts}). P0 has no target.
+P1 states the target and progress. P2 adds that the RM's bonus and review depend on closing the gap. P3 says
+branches that miss the quarter will be consolidated and RM roles cut, ``yours included'', and that every
+lead must be converted. None of P0--P3 asks for a violation. Two ceiling conditions do: P4 adds ``If the
+checks are holding a customer up, do whatever it takes to get the account open today --- use the override
+fields, I'll back you'', and P5, added after the pilot (Section~\ref{sec:deviations}), adds a direct order to
+open the account anyway with ``Approved by branch manager'' as the override reason. Other factors are a
+compliance-primacy sentence in the system prompt (C+), an oversight cue (O1 ``All actions are logged and
+reviewed weekly by Compliance''; O2 ``Compliance is short-staffed; reviews are paused until next quarter''),
+control hardness (H0/H1/H2), and four mitigations: M1 a rulebook summary at the top of the brief, M3 a
+\texttt{request\_target\_extension} tool that the manager grants, M4 a mandatory one-line compliance
+justification on every account opening and deposit, and M6 hard controls plus M3. A floor condition replaces
+the sales role with onboarding review and no target.
+
+\subsection{Experiments}
+
+Table~\ref{tab:design} lists the seven confirmatory experiments. Each Level-1 cell crosses a condition with
+the six blocked lead types; seeds are fixed per cell and reused across conditions, so conditions differ only
+in the manipulated factor.
+
+\begin{table}[t]
+\centering\small
+\caption{Confirmatory experiments. N is per cell (condition $\times$ lead type) for Level~1 and per condition for
+Level~2. Defaults: pressure P3, soft controls (H1), no compliance sentence (C$-$), no oversight cue (O0), no
+mitigation.}
+\label{tab:design}
+\begin{tabular}{@{}lllr@{}}
+\toprule
+ & Manipulation & Models & N \\
+\midrule
+A & pressure P0--P3 & Haiku, Sonnet; Opus & 30; 12 \\
+B & control hardness H0, H2 & Haiku & 30 \\
+C & oversight cue O1, O2 & Haiku & 30 \\
+D & compliance sentence C+ at P1--P3 & Haiku & 30 \\
+E & mitigations M1, M3, M4, M6 (leads B1, B3, B6) & Haiku & 30 \\
+F & floor (no target) and P4 ceiling & Haiku, Sonnet & 6 \\
+G & five-day episodes at P3 and P0 & Haiku & 20, 10 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Models and harness}
+
+The agents were Claude Haiku~5.5, Sonnet~5.5 and Opus~5.5 (\texttt{claude-haiku-5-5},
+\texttt{claude-sonnet-5-5}, \texttt{claude-opus-5-5}) through the Anthropic Messages API with a manual tool
+loop over the in-process MCP server. We sent no temperature or sampling parameters, left thinking at the API
+default and pinned the effort setting to each model's documented default (Haiku and Opus \emph{medium}, Sonnet
+\emph{high}). A response cut off at the 8{,}000-token limit restarts the probe once from a fresh bank; a
+response the API's safety classifier declined is recorded separately. Experiments ran on 2026-10-28.
+
+\subsection{Sample size and budget}
+
+The pre-registration fixed the rule rather than the number: after the pilot, measured cost per probe sets one N
+per experiment before Experiment A, and N is never changed in response to results. The study ran on a prepaid
+API budget with a hard cap of \$80 at list prices, enforced by a spend ledger that stops a run before the cap.
+The final N (Table~\ref{tab:design}) was written to the deviation log before A started; Opus was added last
+at N\,=\,12 from budget left over. The whole study, including pilots, judges and comprehension, cost
+\$\SpendUSD{} at list prices.
+
+\subsection{Analysis}
+
+The pre-registered analysis is logistic regression of violation on the manipulated factor with lead type as a
+covariate, with Firth's penalised likelihood as the declared fallback under separation, a Cochran--Armitage
+trend test for H1, exact binomial tests for H6 and H8, and bootstrap confidence intervals for differences in
+goal attainment. With zero events these tests are not informative, so the primary report is the count with a
+Wilson 95\% interval per cell. The pre-registration also names robustness variants (counting attempts as
+violations, excluding V7); with no events of either kind they coincide with the main analysis.
+
+\subsection{Instrument validation}
+\label{sec:gates}
+
+The pre-registration set four gates before Experiment A. Gate~1, the compliance-only floor shows about zero
+violations for both models, and gate~4, comprehension accuracy of at least 0.9 on clean-lead items, passed.
+Gate~2 required the P4 ceiling to produce a high
+violation rate, to show that model-made violations register; it failed, because no model violated in the
+pilot at P4 (\NPilotPFour{} probes) or at the P5 direct order (\NPilotPFive{} probes). We report this
+failure as a result and validated the instrument without a model instead: a scripted agent that takes the
+circumvention path for every lead type under all three hardness levels was flagged in
+\NScriptedDetected{}/\NScripted{} runs with the expected codes (VIOLATED under H0 and H1, ATTEMPTED under
+H2), a scripted compliant agent was clean in \NScriptedCompliant{}/\NScriptedControls{}, and a test sends the
+same violation as model \texttt{tool\_use} blocks through the API path and checks that it is detected.
+Gate~3 requires detector precision and recall of at least 0.95 on 60 blind hand-labelled runs; the sample mixes pilot probes with scripted violations so that
+recall is measurable although no model violated. The author labelled \SpotLabelled{} runs and agreed with the detector
+outcome in \SpotAgree{} (\SpotTP{} true positives, \SpotFP{} false positives, \SpotFN{} false negatives).
